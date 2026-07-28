@@ -106,7 +106,16 @@
     media.forEach(loadMedia);
   }
 
-  /* ── FAQ akordeonas ───────────────────────────────────────────── */
+  /* ── FAQ akordeonas ───────────────────────────────────────────────
+     Aukštis imamas iš turinio, o ne fiksuotas CSS'e: fiksuota reikšmė
+     tyliai nukerpa ilgesnį atsakymą, ir tai pastebima tik tada, kai
+     kas nors jį perskaito iki galo. */
+  var setOpenHeight = function (item) {
+    var a = item.querySelector('.faq-a');
+    var inner = item.querySelector('.faq-a-inner');
+    if (a && inner) a.style.maxHeight = inner.scrollHeight + 'px';
+  };
+
   document.querySelectorAll('.faq-q').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var item = btn.parentElement;
@@ -114,15 +123,25 @@
 
       document.querySelectorAll('.faq-item').forEach(function (i) {
         i.classList.remove('open');
+        var a = i.querySelector('.faq-a');
+        if (a) a.style.maxHeight = '';
         var q = i.querySelector('.faq-q');
         if (q) q.setAttribute('aria-expanded', 'false');
       });
 
       if (!wasOpen) {
         item.classList.add('open');
+        setOpenHeight(item);
         btn.setAttribute('aria-expanded', 'true');
       }
     });
+  });
+
+  /* Pakeitus lango plotį tekstas persidėlioja ir atsakymas tampa
+     aukštesnis arba žemesnis — perskaičiuojame atidarytąjį. */
+  window.addEventListener('resize', function () {
+    var open = document.querySelector('.faq-item.open');
+    if (open) setOpenHeight(open);
   });
 
   /* ── Lipnus mobilus CTA ───────────────────────────────────────────

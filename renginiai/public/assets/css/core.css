@@ -408,6 +408,11 @@ strong { font-weight: 700; color: var(--ink); }
 .faq-q .icon { flex-shrink: 0; color: var(--accent-dark); transition: transform .22s ease; }
 .faq-item.open .faq-q .icon { transform: rotate(45deg); }
 .faq-a { max-height: 0; overflow: hidden; transition: max-height .28s ease; }
+/* Atsarginė reikšmė, jei JS nesuveiktų: geriau matyti atsakymą be
+   animacijos negu tuščią vietą. Atidarant JS užrašo tikslų aukštį
+   inline stiliumi, todėl fiksuotas skaičius niekada nenukerpa ilgo
+   atsakymo — būtent tai ir buvo sugedę. */
+.faq-item.open .faq-a { max-height: 1500px; }
 .faq-a-inner {
   padding: 0 2px 22px;
   color: var(--ink-soft); font-size: 17px; line-height: 1.7;
