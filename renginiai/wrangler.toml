@@ -1,4 +1,12 @@
-name = "renginiai"
+# Šis vardas privalo SUTAPTI su Cloudflare Worker'io pavadinimu, kitaip
+# `wrangler deploy` kurtų naują Worker'į vietoj to, kuris jau prijungtas
+# prie Git. Čia jis paveldėtas iš repozitoriumo vardo, nes Cloudflare taip
+# pavadino projektą kuriant.
+#
+# Antram klientui: kurdami Worker'į skydelyje duokite jam kliento vardą
+# (pvz. `fotografas`) ir tą patį įrašykite čia — vienas repozitoriumas,
+# keli Worker'iai, kiekvienas su savo katalogu ir savo D1 baze.
+name = "agenturos-funnel"
 main = "src/index.js"
 compatibility_date = "2026-07-28"
 
