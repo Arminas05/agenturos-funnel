@@ -1,9 +1,8 @@
 /**
  * POST /api/lead — priima formos duomenis, įrašo į D1, praneša telefonu.
  *
- * Cloudflare Pages Functions maršrutas nustatomas pagal failo kelią:
- *   functions/api/lead.js  →  /api/lead
- * Failo pervadinti negalima — maršrutas dings.
+ * Maršrutą priskiria src/index.js. Šis failas eksportuoja gryną
+ * funkciją, todėl jį galima testuoti atskirai nuo maršrutizavimo.
  *
  * Privalomas binding:
  *   DB                  → D1 duomenų bazė (wrangler.toml + Pages nustatymai)
@@ -81,7 +80,7 @@ async function notify(env, lead) {
   }
 }
 
-export async function onRequestPost({ request, env }) {
+export async function handleLead(request, env) {
   let body;
   try {
     body = await request.json();
@@ -161,7 +160,3 @@ export async function onRequestPost({ request, env }) {
 
   return json({ ok: true });
 }
-
-/* GET į šį adresą neturi prasmės — grąžiname aiškų atsakymą vietoj 405. */
-export const onRequestGet = () =>
-  json({ error: 'Naudokite POST' }, 405);

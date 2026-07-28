@@ -36,9 +36,11 @@ funnels/
     │       │   └── theme-<vardas>.css ← VIENINTELIS kliento failas
     │       ├── js/app.js
     │       └── img/
-    ├── functions/api/
-    │   ├── lead.js
-    │   └── leads.js
+    ├── src/
+    │   ├── index.js           ← Worker maršrutai
+    │   └── api/
+    │       ├── lead.js
+    │       └── leads.js
     ├── schema.sql
     ├── wrangler.toml
     └── DEPLOY.md
@@ -201,9 +203,9 @@ rm -rf public/assets/img/*.jpg
 3. `wrangler.toml` → naujas `name` ir nauja D1 bazė
 4. `DEPLOY.md` → atnaujinti bazės pavadinimą
 5. Nuotraukos į `public/assets/img/`
-6. Naujas Cloudflare Pages projektas, `Root directory` = `funnels/naujas-klientas`
+6. Naujas Cloudflare Workers projektas, `Root directory` = `naujas-klientas`
 
-Kas **nesikeičia**: `core.css`, `app.js`, `functions/`, `schema.sql`,
+Kas **nesikeičia**: `core.css`, `app.js`, `src/`, `schema.sql`,
 `_headers`. Tai ir yra sutaupytas laikas.
 
 ---

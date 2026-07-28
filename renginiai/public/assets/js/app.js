@@ -201,7 +201,7 @@
       })
       .then(function (r) {
         if (!r.ok) throw new Error(r.data && r.data.error ? r.data.error : 'Klaida');
-        window.location.href = '/aciu.html';
+        window.location.href = '/aciu';
       })
       .catch(function () {
         submitting = false;

@@ -6,6 +6,89 @@ statydami naują funnel'į — tai pigiau negu derinti iš naujo.
 
 ---
 
+## CF-011 · `Could not detect a directory containing static files`
+
+**Klaida diegimo žurnale**
+```
+Executing user deploy command: npx wrangler deploy
+✘ [ERROR] Could not detect a directory containing static files
+   (e.g. html, css and js) for the project
+Failed: error occurred while running deploy command
+```
+
+**Kada** Pirmas diegimas iš Git, kai funnel'is guli pakatalogyje
+(`renginiai/`), o ne repozitoriumo šaknyje.
+
+**Priežastis** Dvi atskiros priežastys, kurios pasitaiko kartu:
+
+1. **Nenurodytas `Root directory`.** `wrangler deploy` paleidžiamas
+   repozitoriumo šaknyje, kur nėra nei `wrangler.toml`, nei `public/`,
+   todėl wrangler bando spėti statinių failų katalogą ir nespėja.
+2. **Projektas sukurtas kaip Workers, o kodas rašytas Pages.** Požymis
+   žurnale vienareikšmis: **Pages projektuose nėra „deploy command"** —
+   jie naudoja build command ir output directory. Eilutė
+   `Executing user deploy command: npx wrangler deploy` reiškia, kad tai
+   Workers Builds.
+
+**Sprendimas** Nustatyti `Root directory` = kliento katalogas. Jei kodas
+dar Pages formato, jį reikia konvertuoti (žr. CF-012).
+
+**Prevencija** Nuspręsti dėl platformos **prieš** rašant backend'ą.
+Cloudflare naujus projektus kreipia į Workers, todėl naujiems
+funnel'iams Pages rinktis nebeverta.
+
+**Žymos:** `cloudflare` `workers` `svarbumas: aukštas`
+
+---
+
+## CF-012 · Perėjimas nuo Pages Functions prie Workers Static Assets
+
+**Kada** Kodas parašytas Pages formatu (`functions/` katalogas,
+`pages_build_output_dir`), o projektas turi veikti kaip Workers.
+
+**Ką reikia pakeisti**
+
+| Pages | Workers |
+|---|---|
+| `pages_build_output_dir = "public"` | `[assets] directory = "./public"` |
+| `functions/api/lead.js` → auto maršrutas | `main = "src/index.js"` + maršrutai kode |
+| `export async function onRequestPost({ request, env })` | `export async function handleLead(request, env)` |
+| Bindingas kartojamas skydelyje rankomis | Bindingas pritaikomas iš `wrangler.toml` |
+
+Maršrutizatorius:
+
+```js
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    if (url.pathname === '/api/lead') return handleLead(request, env);
+    if (url.pathname.startsWith('/api/')) return json({ error: 'Nerasta' }, 404);
+    return env.ASSETS.fetch(request);
+  },
+};
+```
+
+**Kas NEsikeičia** `_headers` ir `_redirects` failai Workers Static
+Assets palaikomi natyviai, jei guli statinių failų kataloge. D1 kodas
+identiškas.
+
+**Dvi smulkmenos, kurios pastebimos tik ištestavus**
+
+1. Workers automatiškai nukreipia `/aciu.html` → `/aciu` (307). Veikia,
+   bet formos kelyje atsiranda nereikalingas šuolis — nuorodas ir
+   `window.location.href` verta rašyti be `.html`.
+2. Nežinomas `/api/*` kelias be atskiro patikrinimo grąžintų HTML
+   puslapį, ir naršyklės `response.json()` suklustų su neaiškia klaida.
+   Todėl `/api/` prefiksui grąžinamas JSON 404.
+
+**Privalumas, dėl kurio verta pereiti** Dingsta CF-003 klasės klaida:
+Workers projektuose bindingo skydelyje kartoti nereikia, todėl
+„lokaliai veikia, gyvai ne" situacija nebeatsiranda.
+
+**Žymos:** `cloudflare` `workers` `migracija` `svarbumas: aukštas`
+
+---
+
 ## CF-001 · `no such table: leads` nors schema paleista
 
 **Klaida serverio žurnale**
@@ -48,6 +131,9 @@ wrangler paleidimo žurnale. Ji parodo tikrąjį bazės pavadinimą.
 
 ## CF-002 · Forma grąžina 404, nors puslapis veikia
 
+> **Pages laikų įrašas.** Perėjus prie Workers (CF-012) simptomas tas
+> pats, bet priežastis aprašyta CF-011.
+
 **Klaida naršyklės konsolėje**
 ```
 POST https://domenas.lt/api/lead 404 (Not Found)
@@ -79,6 +165,9 @@ reklamos paleidimą.
 ---
 
 ## CF-003 · „Serverio konfigūracijos klaida“ gyvame puslapyje
+
+> **Pages laikų įrašas.** Workers projektuose ši klaida nebeatsiranda —
+> bindingas pritaikomas iš `wrangler.toml`, o ne rankomis skydelyje.
 
 **Kada** Lokaliai viskas veikia, gyvai forma neišsiunčia.
 

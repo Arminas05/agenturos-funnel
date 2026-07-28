@@ -24,7 +24,7 @@ const csvCell = (v) => {
   return '"' + (risky ? "'" + s : s).replace(/"/g, '""') + '"';
 };
 
-export async function onRequestGet({ request, env }) {
+export async function handleLeadsExport(request, env) {
   if (!env.LEADS_TOKEN) {
     return new Response(
       JSON.stringify({ error: 'LEADS_TOKEN nenustatytas. Endpoint išjungtas.' }),

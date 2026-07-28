@@ -19,21 +19,27 @@ savarankiškas, atskirai diegiamas Cloudflare Pages projektas.
 | suprasti sistemą ir statyti naują funnel'į | [`docs/AGENCY.md`](docs/AGENCY.md) |
 | išspręsti klaidą | [`docs/CLOUDFLARE-KLAIDOS.md`](docs/CLOUDFLARE-KLAIDOS.md) |
 
-## Cloudflare Pages nustatymai
+## Cloudflare nustatymai
 
-Kiekvienas funnel'is jungiamas kaip **atskiras** Pages projektas iš to
-paties repozitoriumo:
+Kiekvienas funnel'is jungiamas kaip **atskiras Workers projektas** iš to
+paties repozitoriumo (Compute → Create → Import a repository):
 
 | Laukas | Reikšmė |
 |---|---|
-| Root directory | kliento katalogas, pvz. `renginiai` |
-| Build output directory | `public` |
+| **Root directory** | kliento katalogas, pvz. `renginiai` |
 | Build command | *(tuščia)* |
-| Framework preset | None |
+| Deploy command | `npx wrangler deploy` |
+| Production branch | `main` |
 
-`Root directory` be kliento katalogo reiškia, kad puslapis atsidarys
-gražiai, o forma grąžins 404 — Pages ieško `functions/` projekto
-šaknyje. Tai vienintelė vieta, kur klaida nematoma iš karto.
+`Root directory` be kliento katalogo reiškia, kad `wrangler deploy`
+paleidžiamas repozitoriumo šaknyje, kur nėra nei `wrangler.toml`, nei
+`public/`, ir diegimas krenta su *„Could not detect a directory
+containing static files"*.
+
+Platformos pasirinkimas: naudojame Workers Static Assets, o ne Pages.
+Cloudflare naujus projektus kreipia būtent ten, o D1 bindingai
+pritaikomi tiesiai iš `wrangler.toml` — nebereikia jų atskirai kartoti
+skydelyje, o tai buvo dažniausia diegimo klaida su Pages.
 
 ## Taisyklės
 
