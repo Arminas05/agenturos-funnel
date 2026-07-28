@@ -1,0 +1,423 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   AGENCY CORE — client-agnostic layout + component layer
+   ───────────────────────────────────────────────────────────────────────
+   This file NEVER contains brand colours or fonts. It consumes tokens
+   that a theme file defines. To build a new funnel:
+
+     1. copy this file into  <funnel>/public/assets/css/core.css
+     2. write a new         <funnel>/public/assets/css/theme-<name>.css
+        that defines every token listed in "REQUIRED TOKENS" below
+     3. load theme FIRST, then core
+
+   Master copy lives at funnels/_shared/core.css — edit here, then copy
+   outward. Never edit a funnel's copy directly or the system drifts.
+
+   REQUIRED TOKENS (theme must define all of these):
+     --paper --paper-warm --ink --ink-soft --ink-mute
+     --accent --accent-dark --accent-tint --line
+     --success --danger
+     --font-display --font-body --radius
+   ═══════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 18px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img, svg, video { display: block; max-width: 100%; height: auto; }
+
+/* ── Layout primitives ───────────────────────────────────────────── */
+.wrap      { max-width: 760px; margin: 0 auto; padding: 0 22px; }
+.wrap-wide { max-width: 1080px; margin: 0 auto; padding: 0 22px; }
+
+section        { padding: 72px 0; }
+section.tight  { padding: 44px 0; }
+section.flush  { padding: 0 0 72px; }
+.bg-warm       { background: var(--paper-warm); }
+
+.rule {
+  height: 1px; border: 0; background: var(--line);
+  max-width: 760px; margin: 0 auto;
+}
+
+/* ── Type scale ──────────────────────────────────────────────────── */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.18;
+}
+
+h1 { font-size: clamp(33px, 6.4vw, 55px); }
+h2 { font-size: clamp(27px, 4.3vw, 38px); line-height: 1.22; }
+h3 { font-size: clamp(19px, 2.4vw, 23px); line-height: 1.3; }
+
+/* Mid-sentence weight mixing — the signature emphasis device.
+   Use <em class="hl"> inside a heading, never a separate colour block. */
+.hl   { font-style: normal; font-weight: 700; color: var(--accent-dark); }
+.soft { font-weight: 400; color: var(--ink-soft); }
+
+p { max-width: 62ch; }
+.lede {
+  font-size: clamp(18px, 2.1vw, 21px);
+  color: var(--ink-soft);
+  line-height: 1.62;
+}
+.center      { text-align: center; }
+.center p,
+.center .lede { margin-left: auto; margin-right: auto; }
+
+strong { font-weight: 700; color: var(--ink); }
+
+.eyebrow {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 12.5px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent-dark);
+  margin-bottom: 14px;
+}
+
+.payoff {
+  font-weight: 700; color: var(--ink);
+  display: block; margin-top: 10px;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-size: 17px; font-weight: 700; line-height: 1.2;
+  padding: 19px 32px;
+  border: none; border-radius: var(--radius);
+  background: var(--accent); color: #fff;
+  text-decoration: none; cursor: pointer;
+  transition: background .15s ease, transform .1s ease;
+  box-shadow: 0 10px 26px -12px rgba(0, 0, 0, .45);
+  width: 100%;
+}
+.btn:hover  { background: var(--accent-dark); }
+.btn:active { transform: scale(.99); }
+.btn:focus-visible { outline: 3px solid var(--accent-dark); outline-offset: 3px; }
+
+.btn-ghost {
+  background: transparent; color: var(--ink);
+  border: 1.5px solid var(--line); box-shadow: none;
+}
+.btn-ghost:hover { background: var(--paper-warm); border-color: var(--ink-mute); }
+
+@media (min-width: 520px) { .btn { width: auto; min-width: 300px; } }
+
+.cta-stack {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 11px;
+}
+@media (min-width: 620px) {
+  .cta-stack { flex-direction: row; justify-content: center; }
+  .cta-stack .btn { width: auto; min-width: 0; }
+}
+.cta-note { font-size: 14px; color: var(--ink-mute); margin-top: 13px; }
+
+/* ── Trust strip ─────────────────────────────────────────────────── */
+.strip {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 9px 24px;
+  font-size: 14.5px; font-weight: 500; color: var(--ink-mute);
+}
+.strip span { display: inline-flex; align-items: center; gap: 7px; }
+
+/* ── Lists (pain / deliverable) ──────────────────────────────────── */
+.list { list-style: none; max-width: 620px; margin: 0 auto; }
+.list li {
+  display: flex; gap: 15px;
+  padding: 17px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 17.5px; color: var(--ink-soft);
+}
+.list li:last-child { border-bottom: none; }
+.list .ico { flex-shrink: 0; margin-top: 4px; }
+.list strong { color: var(--ink); }
+
+.tick {
+  flex-shrink: 0;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--success);
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px;
+}
+
+/* ── Numbered steps ──────────────────────────────────────────────── */
+.step-row {
+  display: flex; gap: 20px;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--line);
+}
+.step-row:last-child { border-bottom: none; }
+.step-num {
+  flex-shrink: 0;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  font-family: var(--font-display); font-size: 16px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px;
+}
+.step-row h3 { margin-bottom: 6px; }
+.step-row p  { color: var(--ink-soft); font-size: 17px; }
+.step-tag {
+  font-family: var(--font-body);
+  font-size: 12.5px; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--accent-dark);
+  margin-bottom: 4px;
+}
+
+/* ── Want / hate comparison ──────────────────────────────────────── */
+.wh { display: grid; gap: 18px; max-width: 720px; margin: 0 auto; }
+@media (min-width: 660px) { .wh { grid-template-columns: 1fr 1fr; } }
+.wh-col { padding: 28px 26px; border-radius: var(--radius); }
+.wh-col.hate { background: var(--paper-warm); border: 1px solid var(--line); }
+.wh-col.want { background: var(--accent-tint); }
+.wh-col h3 {
+  font-family: var(--font-body);
+  font-size: 12.5px; font-weight: 800;
+  letter-spacing: .08em; text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.wh-col.hate h3 { color: var(--ink-mute); }
+.wh-col.want h3 { color: var(--accent-dark); }
+.wh-col ul { list-style: none; }
+.wh-col li { padding: 9px 0; font-size: 16.5px; line-height: 1.45; }
+.wh-col.hate li {
+  color: var(--ink-mute);
+  text-decoration: line-through;
+  text-decoration-color: var(--line);
+}
+.wh-col.want li { color: var(--ink); font-weight: 500; }
+
+/* ── Qualification block (segmented avatar device) ───────────────── */
+.qual { max-width: 700px; margin: 0 auto; }
+.qual-block { padding: 40px 0; border-bottom: 1px solid var(--line); }
+.qual-block:last-child { border-bottom: none; }
+.qual-block h3 { font-size: clamp(21px, 3vw, 27px); margin-bottom: 16px; }
+.qual-block p  { color: var(--ink-soft); font-size: 17.5px; margin-bottom: 14px; }
+.qual-block p:last-of-type { margin-bottom: 0; }
+
+/* The repeated cost-of-inaction line. Identical under every block —
+   the repetition IS the device. Do not vary the wording per block. */
+.cost-line {
+  margin-top: 20px; padding-top: 18px;
+  border-top: 1px dashed var(--line);
+  font-family: var(--font-display);
+  font-size: 18px; font-style: italic; font-weight: 500;
+  color: var(--ink);
+}
+
+/* ── Cards ───────────────────────────────────────────────────────── */
+.card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 34px 30px;
+}
+.card p { color: var(--ink-soft); margin-bottom: 15px; }
+.card p:last-child { margin-bottom: 0; }
+.card-tag {
+  display: inline-block;
+  background: var(--paper-warm); border-radius: 7px;
+  padding: 5px 11px; margin-bottom: 15px;
+  font-family: var(--font-body);
+  font-size: 11.5px; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.pullquote {
+  font-family: var(--font-display);
+  font-size: clamp(21px, 3vw, 27px);
+  font-weight: 500; font-style: italic;
+  line-height: 1.45; color: var(--ink);
+  max-width: 640px; margin: 0 auto; text-align: center;
+}
+
+/* ── Photo proof ─────────────────────────────────────────────────── */
+.photo-grid { display: grid; gap: 14px; }
+@media (min-width: 700px) { .photo-grid { grid-template-columns: 1fr 1fr; } }
+
+.photo {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--paper-warm);
+  aspect-ratio: 4 / 3;
+}
+.photo img { width: 100%; height: 100%; object-fit: cover; }
+.photo figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 26px 18px 14px;
+  background: linear-gradient(to top, rgba(20, 16, 12, .82), transparent);
+  color: #fff; font-size: 14.5px; font-weight: 600;
+}
+
+/* Placeholder shown until a real photo is dropped in. Deliberately
+   labelled — never a fake stock image standing in for real proof. */
+.photo-empty {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 8px; padding: 20px; text-align: center;
+  border: 1.5px dashed var(--line);
+  color: var(--ink-mute); font-size: 14px;
+}
+
+/* ── FAQ accordion ───────────────────────────────────────────────── */
+.faq-item { border-bottom: 1px solid var(--line); }
+.faq-item:first-of-type { border-top: 1px solid var(--line); }
+.faq-q {
+  width: 100%; text-align: left;
+  background: none; border: none; cursor: pointer;
+  padding: 22px 2px;
+  font-family: var(--font-body);
+  font-size: 17.5px; font-weight: 600; color: var(--ink);
+  display: flex; justify-content: space-between; align-items: center; gap: 16px;
+}
+.faq-q .icon { flex-shrink: 0; color: var(--accent-dark); transition: transform .22s ease; }
+.faq-item.open .faq-q .icon { transform: rotate(45deg); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height .28s ease; }
+.faq-a-inner {
+  padding: 0 2px 22px;
+  color: var(--ink-soft); font-size: 17px; line-height: 1.7;
+}
+
+/* ── Form ────────────────────────────────────────────────────────── */
+.form { max-width: 470px; margin: 0 auto; text-align: left; }
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-size: 14px; font-weight: 600; color: var(--ink-soft);
+  margin-bottom: 7px;
+}
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 14px 16px;
+  font-family: var(--font-body); font-size: 16px; color: var(--ink);
+  background: var(--paper);
+  border: 1.5px solid var(--line); border-radius: var(--radius);
+  transition: border-color .15s ease;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none; border-color: var(--accent);
+}
+.field input.invalid, .field select.invalid { border-color: var(--danger); }
+.field-err {
+  display: none;
+  font-size: 13.5px; color: var(--danger); margin-top: 6px;
+}
+.field-err.on { display: block; }
+
+.consent {
+  display: flex; gap: 11px; align-items: flex-start;
+  font-size: 13.5px; color: var(--ink-mute); line-height: 1.5;
+  margin-bottom: 18px;
+}
+.consent input { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; }
+.consent a { color: var(--accent-dark); }
+
+/* Honeypot — must stay visually hidden but NOT display:none, or some
+   bots detect and skip it. Off-screen positioning works better. */
+.hp {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px; height: 1px; overflow: hidden;
+}
+
+.form-msg {
+  display: none;
+  padding: 15px 17px; border-radius: var(--radius);
+  font-size: 15.5px; font-weight: 600; margin-top: 14px;
+}
+.form-msg.on { display: block; }
+.form-msg.ok  { background: var(--accent-tint); color: var(--accent-dark); }
+.form-msg.bad { background: #FBEAE8; color: var(--danger); }
+
+.spinner {
+  width: 17px; height: 17px;
+  border: 2.5px solid rgba(255, 255, 255, .4);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Sticky mobile CTA ───────────────────────────────────────────── */
+.sticky {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 500;
+  display: none;
+  padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--paper) 96%, transparent);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--line);
+}
+.sticky.on { display: block; }
+.sticky .btn { width: 100%; min-width: 0; padding: 16px 20px; font-size: 16.5px; }
+@media (min-width: 900px) { .sticky { display: none !important; } }
+
+/* ── Exit intent ─────────────────────────────────────────────────── */
+.overlay {
+  position: fixed; inset: 0; z-index: 999;
+  display: none; align-items: center; justify-content: center;
+  padding: 18px;
+  background: rgba(20, 16, 12, .55);
+  backdrop-filter: blur(4px);
+}
+.overlay.on { display: flex; }
+.overlay-box {
+  position: relative;
+  background: var(--paper);
+  border-radius: calc(var(--radius) * 1.5);
+  max-width: 440px; width: 100%;
+  padding: 38px 30px; text-align: center;
+  box-shadow: 0 30px 80px -22px rgba(20, 16, 12, .5);
+}
+.overlay-close {
+  position: absolute; top: 14px; right: 14px;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--paper-warm); border: none; cursor: pointer;
+  color: var(--ink-mute);
+  display: flex; align-items: center; justify-content: center;
+}
+.overlay-box h3 { margin-bottom: 11px; }
+.overlay-box p  { color: var(--ink-soft); font-size: 16px; margin: 0 auto 20px; }
+
+/* ── Footer ──────────────────────────────────────────────────────── */
+footer {
+  padding: 40px 0 100px;
+  text-align: center;
+  color: var(--ink-mute); font-size: 13.5px; line-height: 1.7;
+}
+footer a { color: var(--ink-mute); }
+.disclaimer {
+  max-width: 620px; margin: 0 auto 14px;
+  font-size: 12.5px; color: var(--ink-mute);
+}
+
+/* ── Accessibility ───────────────────────────────────────────────── */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}

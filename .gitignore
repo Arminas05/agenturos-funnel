@@ -1,0 +1,13 @@
+# Cloudflare / wrangler
+.wrangler/
+.dev.vars
+.dev.vars.*
+wrangler.toml.bak
+
+# Priklausomybės
+node_modules/
+
+# Kompiuterio šiukšlės
+.DS_Store
+Thumbs.db
+*.log

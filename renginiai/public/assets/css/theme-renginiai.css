@@ -1,0 +1,114 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   THEME — "Šiltas vakaras" (renginių vedėjas + DJ)
+   ───────────────────────────────────────────────────────────────────────
+   Light and warm, per brief: "šviesus dizainas ... šiltas".
+
+   Design reasoning — the trap this deliberately avoids:
+   the obvious move for a DJ page is dark + neon + laser gradients, i.e.
+   a photo of the lighting rig turned into a colour scheme. That looks
+   like a nightclub flyer and reads cheap to the person actually paying
+   for a wedding. So the page is the opposite of the photos: warm ivory
+   paper, candlelight gold, generous space. The neon lives ONLY inside
+   the event photographs, where it belongs — the contrast makes the
+   photos hit harder than a dark page ever could.
+
+   Palette is warm-neutral (every grey carries a yellow bias) so nothing
+   reads clinical. Gold is the single accent and is used sparingly.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Surfaces */
+  --paper:       #FDFBF7;  /* warm ivory page */
+  --paper-warm:  #F6EFE4;  /* card / alt-section */
+
+  /* Ink — warm-biased neutrals, never pure grey.
+     --ink-mute is darker than it looks like it should be on purpose:
+     the "pretty" muted grey #8B8073 measured 3.7:1 on paper and failed
+     WCAG AA for body text. Checked against BOTH surfaces — a value that
+     passes on --paper can still fail on --paper-warm, which is where
+     most muted text actually sits. */
+  --ink:         #211C16;   /* 16.4:1 on --paper */
+  --ink-soft:    #574E44;   /* 7.9:1  on --paper */
+  --ink-mute:    #766C5F;   /* 4.98:1 on --paper, 4.51:1 on --paper-warm */
+
+  /* Accent — candlelight gold.
+     Also darker than the "pretty" gold: white-on-#BE8C2C is 3.0:1 and
+     fails on the primary CTA, which is the one element that must never
+     be hard to read. Gold is unusually punishing here — it is a light
+     hue, so it has to go quite dark before white sits on it safely. */
+  --accent:      #9A6E1D;   /* 4.54:1 with #fff — AA on the primary CTA */
+  --accent-dark: #855D14;   /* 5.9:1 with #fff, 5.7:1 as text on paper */
+  --accent-tint: #FAF2DF;
+
+  --line:        #E7DDCB;
+
+  --success:     #4F7A5B;
+  --danger:      #B4453C;
+
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --radius: 12px;
+}
+
+/* Hero gets a very soft warm wash rather than a hard gradient block —
+   enough to separate it from the page without shouting. */
+.hero {
+  background:
+    radial-gradient(120% 90% at 50% 0%, var(--accent-tint) 0%, var(--paper) 62%);
+  padding: 58px 0 62px;
+  text-align: center;
+}
+.hero h1 { margin-bottom: 22px; }
+.hero .lede { max-width: 610px; margin: 0 auto 30px; }
+.hero .strip { margin-top: 30px; }
+
+/* The presumption opener — set apart as if spoken directly. */
+.presume {
+  max-width: 660px; margin: 0 auto;
+  font-size: clamp(19px, 2.4vw, 23px);
+  line-height: 1.62; color: var(--ink-soft);
+}
+.presume p { max-width: none; margin-bottom: 18px; }
+.presume p:last-child { margin-bottom: 0; }
+.presume strong { color: var(--ink); }
+
+/* Section intros keep a consistent rhythm across the page. */
+.sec-head { text-align: center; margin-bottom: 34px; }
+.sec-head h2 { margin-bottom: 12px; }
+.sec-head p  { color: var(--ink-soft); font-size: 18px; margin: 0 auto; max-width: 56ch; }
+
+/* Photo captions sit on real event photography — kept minimal so the
+   photo does the talking. */
+.proof-note {
+  text-align: center; font-size: 14px; color: var(--ink-mute);
+  margin-top: 16px;
+}
+
+/* Placeholder testimonial — visually obvious that it is NOT a real
+   quote yet. Dashed border + muted type reads as "to be filled",
+   never as a finished endorsement. */
+.tm-placeholder {
+  border: 1.5px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 26px 24px;
+  background: transparent;
+}
+.tm-placeholder .tm-label {
+  display: inline-block;
+  font-size: 11.5px; font-weight: 700; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--danger);
+  margin-bottom: 10px;
+}
+.tm-placeholder p { color: var(--ink-mute); font-size: 16px; font-style: italic; }
+
+/* Final CTA band */
+.final {
+  background: var(--paper-warm);
+  text-align: center;
+}
+.final h2 { margin-bottom: 14px; }
+.final .lede { margin: 0 auto 26px; max-width: 540px; }
+
+/* Call button carries a subtle icon-left treatment */
+.btn .ph-ico { flex-shrink: 0; }

@@ -1,0 +1,18 @@
+name = "renginiai"
+compatibility_date = "2026-01-01"
+pages_build_output_dir = "public"
+
+# D1 duomenų bazė kontaktams.
+# database_id gaunamas sukūrus bazę:
+#   npx wrangler d1 create renginiai-leads
+# Nukopijuokite grąžintą id čia IR prijunkite bindingą Pages nustatymuose
+# (Settings → Bindings → D1), kitaip gyvame puslapyje env.DB bus tuščias.
+[[d1_databases]]
+binding = "DB"
+database_name = "renginiai-leads"
+database_id = "4008592d-ac1d-40f2-b8a4-45b01090c27e"
+
+# Slaptus kintamuosius (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID,
+# TURNSTILE_SECRET, LEADS_TOKEN) į šį failą RAŠYTI NEGALIMA — jis yra git'e.
+# Jie nustatomi Cloudflare skydelyje:
+#   Pages → Settings → Environment variables → Encrypt
