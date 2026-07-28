@@ -11,44 +11,100 @@
     el.textContent = new Date().getFullYear();
   });
 
-  /* ── Nuotraukų atsarginis variantas ───────────────────────────────
-     Kol į assets/img/ neįkeltos tikros nuotraukos, rodomas punktyrinis
-     rėmelis su užrašu vietoj sugadintos paveikslėlio ikonos.
-     Tvarkoma čia, o ne inline onerror atribute, kad CSP galėtų likti
-     be 'unsafe-inline' script-src dalyje. */
-  var photos = document.querySelectorAll('.photo img');
-  var photosFailed = 0;
+  /* ── Tingus medžiagos krovimas ────────────────────────────────────
+     Trys vaizdo įrašai sveria apie 5 MB. Kraunant juos iškart puslapis
+     telefone mirtų dar prieš pamatant antraštę, todėl `src` priskiriamas
+     tik tada, kai kadras artėja prie ekrano.
 
-  photos.forEach(function (img) {
-    var fail = function () {
-      var fig = img.parentElement;
-      if (!fig || fig.classList.contains('photo-empty')) return;
-      fig.classList.add('photo-empty');
-      var cap = fig.querySelector('figcaption');
-      if (cap) cap.remove();
-      var note = document.createElement('span');
-      note.textContent = 'Vieta nuotraukai: ' + img.getAttribute('src').split('/').pop();
-      fig.appendChild(note);
-      img.remove();
+     Vaizdo įrašai groja be garso ir tik būdami matomi — už ekrano ribų
+     stabdomi, kad nešvaistytų baterijos ir duomenų. */
+  var media = document.querySelectorAll('.media img[data-src], .media video[data-src]');
+  var mediaFailed = 0;
 
-      /* Jei nepavyko NĖ VIENA nuotrauka, visa įrodymų sekcija slepiama.
-         Keturi punktyriniai rėmeliai atrodo kaip sugedęs puslapis, o
-         įrodymų sekcija be įrodymų vis tiek nieko neparduoda. Įkėlus
-         bent vieną nuotrauką sekcija grįžta savaime. */
-      photosFailed++;
-      if (photosFailed === photos.length) {
-        var section = document.getElementById('irodymai');
-        if (section) section.hidden = true;
-        console.info(
-          'Nuotraukų nėra — įrodymų sekcija paslėpta. ' +
-          'Įkelkite failus į assets/img/ (žr. assets/img/README.md).'
-        );
-      }
-    };
-    img.addEventListener('error', fail);
-    /* Jei paveikslėlis nepavyko dar prieš prisegant klausytoją. */
-    if (img.complete && img.naturalWidth === 0) fail();
-  });
+  var markFailed = function (el) {
+    var fig = el.parentElement;
+    if (!fig || fig.classList.contains('media-empty')) return;
+
+    /* Skiriame dvi visiškai skirtingas nesėkmes.
+       MEDIA_ERR_SRC_NOT_SUPPORTED (kodas 4) reiškia, kad failas yra, bet
+       naršyklė jo neiškoduoja — pavyzdžiui, build'as be H.264. Tada
+       kadras tiesiog pašalinamas: svečiui nereikia matyti pavadinimo
+       „video-01.mp4" punktyriniame langelyje.
+       Visos kitos klaidos (dažniausiai 404) reiškia trūkstamą failą, ir
+       ten pavadinimas yra naudingas — būtent jo reikia diegiant. */
+    if (el.tagName === 'VIDEO' && el.error && el.error.code === 4) {
+      fig.remove();
+      mediaFailed++;
+      return;
+    }
+    fig.classList.remove('loading');
+    fig.classList.add('media-empty');
+    var cap = fig.querySelector('figcaption');
+    if (cap) cap.remove();
+    var note = document.createElement('span');
+    note.textContent = (el.getAttribute('data-src') || '').split('/').pop();
+    fig.appendChild(note);
+    el.remove();
+
+    /* Nepavykus visai medžiagai įrodymų sekcija slepiama: tinklelis
+       tuščių rėmelių atrodo kaip sugedęs puslapis, o įrodymų sekcija
+       be įrodymų vis tiek nieko neparduoda. */
+    mediaFailed++;
+    if (mediaFailed === media.length) {
+      var section = document.getElementById('irodymai');
+      if (section) section.hidden = true;
+    }
+  };
+
+  var loadMedia = function (el) {
+    if (el.dataset.loaded) return;
+    el.dataset.loaded = '1';
+    el.addEventListener('error', function () { markFailed(el); });
+
+    if (el.tagName === 'VIDEO') {
+      el.addEventListener('loadeddata', function () {
+        el.parentElement.classList.remove('loading');
+      });
+      el.src = el.dataset.src;
+      el.load();
+    } else {
+      el.addEventListener('load', function () {
+        el.parentElement.classList.remove('loading');
+      });
+      el.src = el.dataset.src;
+    }
+  };
+
+  if (media.length && 'IntersectionObserver' in window) {
+    /* Krauname anksčiau, negu kadras pasirodo ekrane, kad iki jo
+       atslinkus vaizdas jau būtų vietoje. */
+    var loader = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { loadMedia(e.target); loader.unobserve(e.target); }
+      });
+    }, { rootMargin: '300px 0px' });
+
+    /* Grojame tik tai, kas matoma. */
+    var player = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        var v = e.target;
+        if (e.isIntersecting) {
+          var play = v.play();
+          if (play && play.catch) play.catch(function () {});
+        } else if (!v.paused) {
+          v.pause();
+        }
+      });
+    }, { threshold: 0.35 });
+
+    media.forEach(function (el) {
+      loader.observe(el);
+      if (el.tagName === 'VIDEO') player.observe(el);
+    });
+  } else {
+    /* Be IntersectionObserver (labai senos naršyklės) kraunama iškart. */
+    media.forEach(loadMedia);
+  }
 
   /* ── FAQ akordeonas ───────────────────────────────────────────── */
   document.querySelectorAll('.faq-q').forEach(function (btn) {
@@ -208,7 +264,7 @@
         submitBtn.disabled = false;
         submitBtn.textContent = 'Perskambinkite man';
         showMsg(
-          'Nepavyko išsiųsti. Paskambinkite tiesiai: +370 600 00000',
+          'Nepavyko išsiųsti. Paskambinkite tiesiai: +370 674 72202',
           'bad'
         );
       });
