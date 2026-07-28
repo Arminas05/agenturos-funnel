@@ -18,7 +18,7 @@
 
      Vaizdo įrašai groja be garso ir tik būdami matomi — už ekrano ribų
      stabdomi, kad nešvaistytų baterijos ir duomenų. */
-  var media = document.querySelectorAll('.media img[data-src], .media video[data-src]');
+  var media = document.querySelectorAll('figure img[data-src], figure video[data-src]');
   var mediaFailed = 0;
 
   var markFailed = function (el) {

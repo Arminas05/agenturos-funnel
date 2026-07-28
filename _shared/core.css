@@ -252,9 +252,16 @@ strong { font-weight: 700; color: var(--ink); }
    Real event media is portrait — phone footage and phone photos.
    Fighting that with a landscape grid crops the subject out of every
    frame, so the grid is built portrait-first instead. */
-.media-grid { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); }
-@media (min-width: 640px) { .media-grid { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 900px) { .media-grid { grid-template-columns: repeat(4, 1fr); } }
+.media-grid {
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 900px; margin: 0 auto;
+}
+/* Three columns rather than four: the grid holds six items, so three
+   fills exactly two rows. Four columns would leave the second row
+   half-empty, and a ragged final row reads as "we ran out of photos"
+   even when nothing is missing. */
+@media (min-width: 700px) { .media-grid { grid-template-columns: repeat(3, 1fr); } }
 
 .media {
   position: relative;
@@ -530,4 +537,39 @@ footer a { color: var(--ink-mute); }
     animation-duration: .01ms !important;
     transition-duration: .01ms !important;
   }
+}
+
+/* ── Feature media ───────────────────────────────────────────────
+   One large frame carrying the strongest shot. Portrait source, so
+   the frame stays portrait-ish and centred rather than being cropped
+   into a wide band — cropping a phone photo to 16:9 throws away the
+   faces, which is the only part doing any work. */
+.media-feature {
+  max-width: 520px; margin: 0 auto; position: relative;
+  border-radius: calc(var(--radius) * 1.3);
+  overflow: hidden; background: var(--paper-warm);
+  aspect-ratio: 4 / 5;
+  box-shadow: 0 24px 60px -28px rgba(20, 16, 12, .55);
+}
+.media-feature img { width: 100%; height: 100%; object-fit: cover; }
+.media-feature figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 34px 20px 16px;
+  background: linear-gradient(to top, rgba(20, 16, 12, .85), transparent);
+  color: #fff; font-size: 15px; font-weight: 600;
+}
+
+/* Inline shot inside a text section — breaks up a long read without
+   pretending to be proof on its own. */
+.media-inline {
+  max-width: 340px; margin: 22px 0 0; position: relative;
+  border-radius: var(--radius); overflow: hidden;
+  background: var(--paper-warm); aspect-ratio: 3 / 4;
+}
+.media-inline img { width: 100%; height: 100%; object-fit: cover; }
+.media-inline figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 26px 14px 11px;
+  background: linear-gradient(to top, rgba(20, 16, 12, .8), transparent);
+  color: #fff; font-size: 13px; font-weight: 600;
 }
