@@ -368,3 +368,231 @@ kristi ant `--paper-warm`, o būtent ten dažniausiai sėdi pilkas tekstas.
 Skriptas: `_shared/contrast-check.mjs`.
 
 **Žymos:** `dizainas` `prieinamumas` `svarbumas: vidutinis`
+
+---
+
+## CF-013 · `no such table: leads` iškart po `wrangler dev` paleidimo, nors schema jau paleista anksčiau
+
+**Klaida serverio žurnale**
+```
+D1_ERROR: no such table: leads: SQLITE_ERROR
+```
+Paleidus schemą tuoj pat po `wrangler dev` starto (arba po `rm -rf
+.wrangler`), pirmas `POST /api/lead` krenta su 500 — nors `wrangler d1
+execute --local --file=schema.sql` prieš tai grąžino sėkmę.
+
+**Kada** Du atskiri scenarijai, abu su ta pačia išraiška:
+
+1. `.wrangler` katalogas buvo išvalytas (pvz. prieš commit'ą, kad
+   testinės artefaktai nepatektų į git), serveris paleistas iš naujo,
+   bet schema **nebuvo pakartota** — lokalus D1 failas gyvuoja iš naujo
+   tuščias.
+2. Schema paleista **iškart** po `wrangler dev` starto tame pačiame
+   apvalkalo bloke (`nohup ... & sleep N; wrangler d1 execute ...`).
+   Nepaisant to, kad komanda grąžina `"success": true`, pirma užklausa
+   į serverį vis tiek mato tuščią bazę — atskiras `wrangler d1 execute`
+   procesas ir paties `wrangler dev` proceso lokalus miniflare stovis
+   ne visada sinchronizuojasi iš karto, jei paleidžiami vienas po kito
+   per trumpą laiką.
+
+**Sprendimas** Po kiekvieno `rm -rf .wrangler` arba naujo `wrangler dev`
+starto **visada** paleisti schemą iš naujo — tai nešalinamas žingsnis,
+ne pasirinktinis. Prieš pasitikint testu, patikrinti, kad lentelė
+realiai yra:
+
+```bash
+npx wrangler d1 execute <db> --local \
+  --command "SELECT name FROM sqlite_master WHERE type='table';"
+```
+
+Jei lentelės nėra arba testas vis tiek grąžina „no such table“, paleisti
+schemą **dar kartą** — antras paleidimas šioje sesijoje visada
+išsprendė problemą.
+
+**Prevencija** Testavimo scenarijų rašyti tokia tvarka: paleisti
+serverį → palaukti „Ready on“ → paleisti schemą → **patikrinti lentelę
+užklausa** → tik tada testuoti formą. Praleidus patikrinimo žingsnį,
+klaida atrodo kaip kodo gedimas, nors tai vien testavimo sekos dalykas.
+
+**Žymos:** `cloudflare` `d1` `testavimas` `svarbumas: vidutinis`
+
+---
+
+## CF-014 · `wrangler.toml` vardas nesutampa su Cloudflare projekto vardu
+
+**Požymis** Cloudflare skydelyje, Build configuration sekcijoje, geltonas
+įspėjimas:
+```
+Update renginiai/wrangler.toml in your repo to keep settings consistent.
+On Wrangler v3.109.0+, we will auto-generate a PR to fix this after the build.
+
+# renginiai/wrangler.toml
+name = 'agenturos-funnel'
+```
+Diegimas gali kristi arba (blogiau) tyliai sukurti/nukreipti į kitą
+Worker'į negu tas, kuris prijungtas prie Git.
+
+**Kada** Worker'is skydelyje sukurtas su vienu pavadinimu (dažnai
+paveldėtu iš repozitorijos vardo), o `wrangler.toml` faile `name` yra
+kitas — pvz. kliento katalogo pavadinimas.
+
+**Priežastis** `wrangler deploy` naudoja `name` lauką iš `wrangler.toml`
+tam, kad nustatytų, **kurį** Worker'į atnaujinti. Jei jis nesutampa su
+jau prie Git prijungtu Worker'iu, komanda arba nepavyksta, arba
+susikuria naują, atskirą Worker'į — priklausomai nuo situacijos.
+
+**Sprendimas** Vardas `wrangler.toml` faile turi **tiksliai** sutapti su
+Worker'io pavadinimu skydelyje:
+
+```toml
+name = "agenturos-funnel"   # ne "renginiai", ne kliento kodinis vardas
+```
+
+**Prevencija** Vienas repozitoriumas gali laikyti kelis funnel'ius,
+kiekvieną kaip atskirą Worker'į su savo katalogu. Kuriant naują
+Worker'į skydelyje, iškart duoti jam **kliento** vardą (pvz.
+`fotografas`), o ne palikti numatytąjį iš repo pavadinimo — ir tą patį
+vardą įrašyti į to kliento `wrangler.toml`. Dokumentuoti šią taisyklę
+komentaru pačiame `wrangler.toml`, kad kitą kartą nereikėtų atspėti.
+
+**Žymos:** `cloudflare` `workers` `svarbumas: aukštas`
+
+---
+
+## CF-015 · Programinis HTML redagavimas tyliai sugadina žymų lizdavimą
+
+**Požymis** Puslapis naršyklėje atrodo visiškai normaliai (naršyklės
+pačios „pataiso" blogą lizdavimą), bet HTML failo struktūra realiai
+sugadinta — pvz. lieka pusiau parašytos sekcijos liekana be uždarymo
+žymos, arba `<div>` uždaromas per anksti.
+
+**Kada** Redaguojant ilgą HTML failą Python `str.replace()` arba regex
+pakeitimais, kai pakeitimo ribos (`old` string) parinktos netiksliai —
+ypač kai `old` baigiasi viduryje elemento, o ne aiškia žymos riba.
+
+**Priežastis** `str.replace()` neturi jokio supratimo apie HTML
+struktūrą. Jei `old` fragmentas atsitiktinai nutrūksta per anksti (pvz.
+tik iki `<span>` teksto, neįtraukiant likusio antraštės turinio), visa
+tai, kas buvo tarp senos pabaigos ir naujo `new` teksto pradžios,
+prarandama tyliai — jokios klaidos nemetama, nes stringas tiesiog
+pakeičiamas kitu stringu.
+
+**Sprendimas** Rasti tikslią vietą lyginant eilučių skaičius
+(`<div>` prieš `</div>`) arba stumiant gylio skaitiklį per failą:
+
+```python
+depth = 0
+for i, line in enumerate(text.split('\n'), 1):
+    depth += line.count('<div') - line.count('</div>')
+```
+
+Kur skaičius netikėtai nenukrenta iki 0 sekcijos pabaigoje — ten ir yra
+klaida.
+
+**Prevencija** Po **kiekvieno** programinio daugiaeilio HTML pakeitimo
+paleisti tikrą žymų dėklo tikrintuvą (ne skliaustų skaičiavimą):
+
+```python
+import html.parser
+class P(html.parser.HTMLParser):
+    def __init__(s): super().__init__(); s.stack=[]; s.err=[]
+    def handle_starttag(s,t,a):
+        if t not in {'meta','link','br','img','input','hr','path','circle','source'}:
+            s.stack.append(t)
+    def handle_endtag(s,t):
+        if s.stack and s.stack[-1]==t: s.stack.pop()
+        elif t in s.stack: s.err.append(t)
+```
+
+Tuščias `stack` ir `err` failo gale reiškia švarią struktūrą. Vien
+`<div` ir `<section` skaičiavimas (be dėklo, be žymos tvarkos) gali
+klaidingai parodyti „subalansuota“, kai iš tikrųjų žymos yra tiesiog
+netvarkingoje eilėje — patikrinta šioje sesijoje: du atskiri skaitikliai
+sutapo, o dėklo tikrintuvas vis tiek rado klaidą.
+
+Kai keitimas tikrai chirurginis (kelios eilutės, aiški unikali vieta),
+saugiau naudoti tikslaus teksto atitikimo redagavimo įrankį (pvz. Edit)
+negu regex pakeitimą per visą failą.
+
+**Žymos:** `html` `testavimas` `svarbumas: vidutinis`
+
+---
+
+## CF-016 · Skirtingų proporcijų medžiaga viename CSS grid palieka nelygius tarpus
+
+**Požymis** Nuotraukų/vaizdo įrašų tinklelis, kur kai kurie elementai
+aukšti (portretinis 9:16 video), o kiti žemesni (3:4 nuotrauka),
+atrodo „laiptuotas“ — po žemesniu elementu lieka tuščias plotas, nors
+techniškai niekas neperkraunama ir jokios klaidos nėra.
+
+**Priežastis** CSS grid eilutės aukštis nustatomas pagal **aukščiausią**
+tos eilutės elementą, bet trumpesni kaimynai automatiškai neišsitempia
+jo užpildyti (nebent aiškiai naudojamas `align-items: stretch` be
+`aspect-ratio`, o su `aspect-ratio` proporcija turi pirmenybę). Rezultatas
+— vizualiai netvarkinga tinklo eilutė, matoma tiek telefone, tiek
+kompiuteryje.
+
+**Sprendimas** Visiems tinklelio elementams naudoti **vieną bendrą
+proporciją**, o ne kiekvieno medijos failo natūralią:
+
+```css
+.media img, .media video { width: 100%; height: 100%; object-fit: cover; }
+```
+
+Kirpimas šiek tiek nuima kraštus nuo kiekvieno kadro, bet grid'as tampa
+tiesus abiejuose galuose. Prieš taikant tikrai medijai, verta patikrinti
+sprendimą izoliuotai — spalvotais blokais be realaus turinio — kad
+matytum grynai išdėstymo problemą, neblaškant dėmesio realiu vaizdu.
+
+**Prevencija** Renkantis, ar mišri proporcija (masonry stilius) reikalinga
+sąmoningai, ar tai tiesiog pasitaikė dėl skirtingų šaltinių formatų —
+jei antra, vienoda proporcija visada saugesnis pasirinkimas fiksuoto,
+nedideliais kiekiais turinio tinklelyje.
+
+**Žymos:** `css` `dizainas` `svarbumas: vidutinis`
+
+---
+
+## CF-017 · Video „nepavyksta“ testinėje naršyklėje, bet realiai veikia
+
+**Klaida naršyklės konsolėje (tik testavimo aplinkoje)**
+```
+DEMUXER_ERROR_NO_SUPPORTED_STREAMS: FFmpegDemuxer: no supported streams
+```
+`video.error.code === 4` (`MEDIA_ERR_SRC_NOT_SUPPORTED`), nors failas
+egzistuoja, grąžina 200 ir realiose naršyklėse (Chrome, Safari, Edge)
+groja be problemų.
+
+**Kada** Testuojant su Playwright'o iš anksto įdiegtu Chromium build'u,
+kuris neturi H.264 (`avc1`) kodeko licencijos:
+
+```js
+video.canPlayType('video/mp4; codecs="avc1.42E01E"')  // ""
+```
+
+**Priežastis** Tai aplinkos apribojimas, ne kodo klaida. Bet jei
+atsarginio varianto logika nedaro skirtumo tarp „failo nėra“ ir „failas
+yra, bet neiškoduojamas“, testinėje aplinkoje **kiekvienas** video bus
+pažymėtas kaip sugedęs — o gyvame puslapyje realiam svečiui tas pats
+kodas tada rodytų pavadinimą tipo „video-01.mp4“ punktyriniame
+langelyje, nors problemos apskritai nėra.
+
+**Sprendimas** Skirti klaidos kodą:
+
+```js
+if (el.tagName === 'VIDEO' && el.error && el.error.code === 4) {
+  /* Kodeko problema — kadras tiesiog pašalinamas, jokio užrašo. */
+  fig.remove();
+  return;
+}
+/* Visos kitos klaidos (dažniausiai 404) — trūkstamas failas,
+   pavadinimas naudingas diegimo metu. */
+```
+
+**Prevencija** Netikėti, kad „video nepavyko teste“ reiškia kodo
+klaidą — pirmiausia patikrinti `canPlayType` ir `error.code` prieš
+taisant ką nors kita. Ir bet kokiu atveju atsarginio varianto logika
+turi elgtis skirtingai priklausomai nuo klaidos priežasties, nes
+gyvame puslapyje abu atvejai realiai pasitaiko.
+
+**Žymos:** `testavimas` `playwright` `video` `svarbumas: žemas`

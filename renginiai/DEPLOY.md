@@ -184,6 +184,18 @@ env.DB (renginiai-leads)   D1 Database   local
 env.ASSETS                 Assets        local
 ```
 
+**Prieš tikrinant formą, patikrinkite, kad lentelė tikrai yra** —
+schema komanda gali grąžinti sėkmę, o lokalus serveris vis tiek
+matyti tuščią bazę, jei paleista iš karto po `wrangler dev` starto
+arba po `.wrangler` katalogo išvalymo:
+
+```bash
+npx wrangler d1 execute renginiai-leads --local \
+  --command "SELECT name FROM sqlite_master WHERE type='table';"
+```
+
+Jei `leads` nerodoma, paleiskite `schema.sql` dar kartą.
+
 ---
 
 ## Kai kas nors neveikia
@@ -194,6 +206,7 @@ env.ASSETS                 Assets        local
 | Forma rodo „Nepavyko išsiųsti", konsolėje 404 | Tas pats | 1 dalis |
 | „Serverio konfigūracijos klaida" | `database_id` neįrašytas į `wrangler.toml` | 2 dalis |
 | Forma veikia, bet bazė tuščia | Nepaleistas `schema.sql` | 2 dalis |
+| Testuojant lokaliai forma staiga grąžina 500 po serverio perkrovimo | Schema nepakartota po `.wrangler` išvalymo | Testavimas kompiuteryje, aukščiau |
 | Pranešimai neateina | Botui neparašyta pirma žinutė | 3 dalis |
 | `/api/leads` grąžina 503 | Nenustatytas `LEADS_TOKEN` | 3 dalis |
 | Lietuviškos raidės CSV sugadintos | Excel atidarytas per „Import" | Atidarykite failą dvigubu paspaudimu |
