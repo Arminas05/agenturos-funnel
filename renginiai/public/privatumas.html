@@ -26,19 +26,24 @@
     <p style="margin-bottom:26px;"><em>Atnaujinta: <span class="year"></span> m.</em></p>
 
     <!-- ═══════════════════════════════════════════════════════════════
-         PAKEISTI PRIEŠ PALEIDŽIANT — be šių duomenų dokumentas
-         neatitinka BDAR reikalavimų:
-           Renginių agentūra       → vardas, pavardė arba įmonės pavadinimas
-           PAKEISTI-IMONES-KODAS → individualios veiklos / įmonės kodas
-           PAKEISTI-EL-PASTAS    → veikiantis el. pašto adresas
-           PAKEISTI-DOMENA.lt    → domenas
-         Šis tekstas yra pagrindas, o ne teisinė konsultacija. Jei
-         renkate daugiau duomenų negu aprašyta, papildykite atitinkamai.
+         LIKO VIENAS NEUŽPILDYTAS LAUKAS — el. paštas.
+
+         Kai jis bus, pakeisti visose vietose vienu veiksmu:
+           grep -rl 'PAKEISTI-EL-PASTAS' public/ \
+             | xargs sed -i 's/PAKEISTI-EL-PASTAS/tikras@pastas.lt/g'
+
+         Įmonės kodo čia sąmoningai nėra: BDAR reikalauja duomenų
+         valdytojo tapatybės ir kontaktų, o ne registro kodo. Fiziniam
+         asmeniui pakanka vardo ir veikiančio kontakto. Atsiradus
+         individualios veiklos pažymai ar įmonei, kodą verta pridėti
+         prie vardo — dokumento struktūros keisti nereikės.
          ═══════════════════════════════════════════════════════════════ -->
 
     <h2>Kas tvarko jūsų duomenis</h2>
-    <p>Renginių agentūra (kodas PAKEISTI-IMONES-KODAS), el. paštas
-    PAKEISTI-EL-PASTAS, svetainė PAKEISTI-DOMENA.lt.</p>
+    <p>Renginių agentūra — renginių vedėjo ir DJ paslaugos.<br>
+    Telefonas +370 674 72202, el. paštas PAKEISTI-EL-PASTAS.</p>
+    <p>Kol el. pašto adresas nenurodytas, visais su duomenimis susijusiais
+    klausimais galite kreiptis telefonu.</p>
 
     <h2>Kokius duomenis renkame</h2>
     <p>Kai užpildote formą svetainėje, išsaugome tik tai, ką patys įrašote:</p>
@@ -82,9 +87,10 @@
     <h2>Jūsų teisės</h2>
     <p>Turite teisę susipažinti su savo duomenimis, juos ištaisyti,
     ištrinti, apriboti tvarkymą, taip pat bet kada atšaukti sutikimą.
-    Parašykite PAKEISTI-EL-PASTAS ir duomenis ištrinsime per 30 dienų.
-    Manydami, kad duomenys tvarkomi netinkamai, galite kreiptis į
-    Valstybinę duomenų apsaugos inspekciją (ada.lt).</p>
+    Parašykite PAKEISTI-EL-PASTAS arba paskambinkite +370 674 72202, ir
+    duomenis ištrinsime per 30 dienų. Manydami, kad duomenys tvarkomi
+    netinkamai, galite kreiptis į Valstybinę duomenų apsaugos inspekciją
+    (ada.lt).</p>
 
     <h2>Paslaugų sąlygos</h2>
     <p>Kaip vyksta užsakymas, kokios kainos ir ko galite tikėtis, aprašyta
