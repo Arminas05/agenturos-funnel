@@ -25,6 +25,23 @@
     var fig = el.parentElement;
     if (!fig || fig.classList.contains('media-empty')) return;
 
+    /* Portretas/klipas sekcijoje „Kas aš toks" nėra įrodymų tinklelio
+       dalis: jo nesant tekstas turi likti vienas, o ne šalia punktyrinio
+       langelio su failo pavadinimu. Ši patikra būtinai pirmesnė už kodo
+       tikrinimą žemiau — kitaip vaizdo įrašas, kurio naršyklė
+       neiškoduoja (kodas 4), patektų į tą šaką ir figūra dingtų be
+       .about-solo žymos, o tekstas liktų įstrigęs 300 px stulpelyje. */
+    if (fig.classList.contains('about-photo')) {
+      var about = fig.parentElement;
+      fig.remove();
+      /* Vien pašalinti kadro neužtenka: tinklelio stulpeliai aprašyti
+         CSS'e, todėl likęs tekstas atsistotų į 300 px portreto stulpelį
+         ir liktų su tuščia puse dešinėje. Žyma grąžina jį į vieną
+         pilno pločio stulpelį. */
+      if (about) about.classList.add('about-solo');
+      return;
+    }
+
     /* Skiriame dvi visiškai skirtingas nesėkmes.
        MEDIA_ERR_SRC_NOT_SUPPORTED (kodas 4) reiškia, kad failas yra, bet
        naršyklė jo neiškoduoja — pavyzdžiui, build'as be H.264. Tada
@@ -35,21 +52,6 @@
     if (el.tagName === 'VIDEO' && el.error && el.error.code === 4) {
       fig.remove();
       mediaFailed++;
-      return;
-    }
-
-    /* Portretas sekcijoje „Kas aš toks" nėra įrodymų tinklelio dalis:
-       jo nesant tekstas turi likti vienas, o ne šalia punktyrinio
-       langelio su failo pavadinimu. Tinklelis susitraukia į vieną
-       skiltį pats, nes antra skiltis tiesiog dingsta. */
-    if (fig.classList.contains('about-photo')) {
-      var about = fig.parentElement;
-      fig.remove();
-      /* Vien pašalinti kadro neužtenka: tinklelio stulpeliai aprašyti
-         CSS'e, todėl likęs tekstas atsistotų į 300 px portreto stulpelį
-         ir liktų su tuščia puse dešinėje. Žyma grąžina jį į vieną
-         pilno pločio stulpelį. */
-      if (about) about.classList.add('about-solo');
       return;
     }
     fig.classList.remove('loading');

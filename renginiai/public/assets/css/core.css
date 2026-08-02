@@ -368,7 +368,7 @@ strong { font-weight: 700; color: var(--ink); }
    vieta būtų nulinė, o atsiradus paveikslėliui tekstas šoktelėtų žemyn. */
 .about { display: grid; gap: 22px; }
 .about-photo { margin: 0; }
-.about-photo img {
+.about-photo img, .about-photo video {
   width: 100%; display: block;
   aspect-ratio: 3 / 4; object-fit: cover; object-position: center 22%;
   border-radius: var(--radius);
