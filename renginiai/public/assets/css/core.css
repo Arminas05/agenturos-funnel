@@ -359,6 +359,30 @@ strong { font-weight: 700; color: var(--ink); }
   border-top: 1px solid var(--line); padding-top: 15px; margin-top: 4px;
 }
 
+/* ── „Kas aš toks" — portretas greta teksto ───────────────────────
+   Telefone viena skiltis: portretas viršuje, tekstas po juo. Nuo 760 px
+   portretas atsistoja kairėje ir lieka `sticky`, kad slenkant tekstą
+   veidas neišbėgtų iš akių — būtent jis čia ir yra įrodymas.
+
+   `aspect-ratio` fiksuojamas, nes nuotrauka kraunama tingiai: be jos
+   vieta būtų nulinė, o atsiradus paveikslėliui tekstas šoktelėtų žemyn. */
+.about { display: grid; gap: 22px; }
+.about-photo { margin: 0; }
+.about-photo img {
+  width: 100%; display: block;
+  aspect-ratio: 3 / 4; object-fit: cover; object-position: center 22%;
+  border-radius: var(--radius);
+  background: var(--paper-warm);
+  box-shadow: 0 1px 2px rgba(33,28,22,.05), 0 14px 34px rgba(33,28,22,.10);
+}
+@media (min-width: 760px) {
+  .about { grid-template-columns: 300px 1fr; gap: 34px; align-items: start; }
+  .about-photo { position: sticky; top: 28px; }
+  /* Nuotraukai nepasikrovus (žymą uždeda app.js) tekstas grįžta į vieną
+     pilno pločio stulpelį, o ne lieka portreto pločio juostoje. */
+  .about.about-solo { grid-template-columns: 1fr; }
+}
+
 .offer-sub {
   font-size: 15px; color: var(--ink-mute);
   margin: -6px 0 16px; line-height: 1.4;
