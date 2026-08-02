@@ -276,17 +276,29 @@
       email: email,
       event_type: document.getElementById('fType').value,
       event_date: document.getElementById('fDate').value,
+      city: document.getElementById('fCity').value.trim(),
+      guest_count: document.getElementById('fGuests').value.trim(),
+      message: document.getElementById('fMessage').value.trim(),
       company: document.getElementById('fCompany').value, /* honeypot */
       page: window.location.pathname,
       referrer: document.referrer || ''
     };
 
+    /* Be laiko limito nutrūkus ryšiui (blogas 4G, užstrigęs edge'as) formos
+       mygtukas liktų „Siunčiama…" neribotą laiką — svečias neturėtų jokio
+       ženklo, kad kažkas negerai, ir tiesiog paliktų puslapį. 12 s yra
+       gerokai daugiau, nei realiam atsakymui reikia, bet nėra „amžinai". */
+    var controller = ('AbortController' in window) ? new AbortController() : null;
+    var timeout = controller && setTimeout(function () { controller.abort(); }, 12000);
+
     fetch('/api/lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      signal: controller ? controller.signal : undefined
     })
       .then(function (res) {
+        if (timeout) clearTimeout(timeout);
         return res.json().then(function (data) {
           return { ok: res.ok, data: data };
         });
@@ -295,12 +307,15 @@
         if (!r.ok) throw new Error(r.data && r.data.error ? r.data.error : 'Klaida');
         window.location.href = '/aciu';
       })
-      .catch(function () {
+      .catch(function (err) {
+        if (timeout) clearTimeout(timeout);
         submitting = false;
         submitBtn.disabled = false;
         submitBtn.textContent = 'Prašau perskambinti';
         showMsg(
-          'Nepavyko išsiųsti. Paskambinkite tiesiai: +370 674 72202',
+          (err && err.name === 'AbortError')
+            ? 'Užtruko per ilgai. Paskambinkite tiesiai: +370 674 72202'
+            : 'Nepavyko išsiųsti. Paskambinkite tiesiai: +370 674 72202',
           'bad'
         );
       });

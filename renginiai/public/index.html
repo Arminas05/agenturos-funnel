@@ -752,6 +752,22 @@
         <input type="date" id="fDate" name="event_date">
       </div>
 
+      <div class="field">
+        <label for="fCity">Miestas <span style="color:var(--ink-mute);font-weight:400;">(nebūtina)</span></label>
+        <input type="text" id="fCity" name="city" autocomplete="address-level2" maxlength="80" placeholder="Vilnius, Kaunas...">
+      </div>
+
+      <div class="field">
+        <label for="fGuests">Svečių skaičius <span style="color:var(--ink-mute);font-weight:400;">(nebūtina)</span></label>
+        <input type="text" id="fGuests" name="guest_count" inputmode="numeric" maxlength="20" placeholder="Pvz. 80 arba apie 60-70">
+      </div>
+
+      <div class="field">
+        <label for="fMessage">Papildoma informacija <span style="color:var(--ink-mute);font-weight:400;">(nebūtina)</span></label>
+        <textarea id="fMessage" name="message" rows="3" maxlength="1000"
+                  placeholder="Vieta, ko norite ar ko tikrai nenorite vakare — kas svarbu žinoti prieš skambinant."></textarea>
+      </div>
+
       <div class="hp" aria-hidden="true">
         <label for="fCompany">Įmonė</label>
         <input type="text" id="fCompany" name="company" tabindex="-1" autocomplete="off">

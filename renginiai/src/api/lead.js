@@ -80,6 +80,9 @@ async function notifyEmail(env, lead) {
     ['El. paštas', lead.email],
     ['Šventė', lead.event_type],
     ['Data', lead.event_date],
+    ['Miestas', lead.city],
+    ['Svečių skaičius', lead.guest_count],
+    ['Papildoma informacija', lead.message],
     ['Puslapis', lead.page],
     ['Iš kur atėjo', lead.referrer],
   ].filter(function (r) { return r[1]; });
@@ -89,8 +92,11 @@ async function notifyEmail(env, lead) {
     '<h2 style="font:600 18px system-ui,sans-serif;margin:0 0 12px">Nauja užklausa iš svetainės</h2>' +
     '<table style="font:15px/1.5 system-ui,sans-serif;border-collapse:collapse">' +
     rows.map(function (r) {
-      return '<tr><td style="padding:4px 14px 4px 0;color:#666">' + esc(r[0]) +
-             '</td><td style="padding:4px 0"><b>' + esc(r[1]) + '</b></td></tr>';
+      /* Klientas laisvą tekstą rašo su eilučių lūžiais (textarea), o HTML
+         juos ignoruotų be šito — pastraipa suplokštėtų į vieną eilutę. */
+      var val = esc(r[1]).replace(/\n/g, '<br>');
+      return '<tr><td style="padding:4px 14px 4px 0;color:#666;vertical-align:top">' + esc(r[0]) +
+             '</td><td style="padding:4px 0"><b>' + val + '</b></td></tr>';
     }).join('') +
     '</table>' +
     '<p style="font:13px system-ui,sans-serif;color:#888;margin-top:16px">' +
@@ -140,6 +146,9 @@ async function notify(env, lead) {
     lead.email ? `✉️ ${lead.email}` : null,
     lead.event_type ? `🎉 ${lead.event_type}` : null,
     lead.event_date ? `📅 ${lead.event_date}` : null,
+    lead.city ? `📍 ${lead.city}` : null,
+    lead.guest_count ? `👥 ${lead.guest_count}` : null,
+    lead.message ? `📝 ${lead.message}` : null,
   ].filter(Boolean);
 
   try {
@@ -196,6 +205,9 @@ export async function handleLead(request, env, ctx) {
     email,
     event_type: clean(body.event_type, 40),
     event_date: clean(body.event_date, 20),
+    city: clean(body.city, 80),
+    guest_count: clean(body.guest_count, 20),
+    message: clean(body.message, 1000),
     page: clean(body.page, 200),
     referrer: clean(body.referrer, 300),
     country: request.headers.get('CF-IPCountry') || '',
@@ -213,9 +225,9 @@ export async function handleLead(request, env, ctx) {
   try {
     await env.DB.prepare(
       `INSERT INTO leads
-         (name, phone, email, event_type, event_date,
+         (name, phone, email, event_type, event_date, city, guest_count, message,
           page, referrer, country, user_agent, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
       .bind(
         lead.name,
@@ -223,6 +235,9 @@ export async function handleLead(request, env, ctx) {
         lead.email,
         lead.event_type,
         lead.event_date,
+        lead.city,
+        lead.guest_count,
+        lead.message,
         lead.page,
         lead.referrer,
         lead.country,
