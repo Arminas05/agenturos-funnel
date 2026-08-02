@@ -23,13 +23,15 @@ const json = (data, status = 200) =>
   });
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
 
     if (path === '/api/lead') {
       if (request.method !== 'POST') return json({ error: 'Naudokite POST' }, 405);
-      return handleLead(request, env);
+      /* ctx perduodamas, kad pranešimai (el. paštas, Telegram) galėtų
+         išsisiųsti fone per waitUntil, nelaikant lankytojo laukiančio. */
+      return handleLead(request, env, ctx);
     }
 
     if (path === '/api/leads') {
