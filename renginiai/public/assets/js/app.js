@@ -281,7 +281,7 @@
       .catch(function () {
         submitting = false;
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Perskambinkite man';
+        submitBtn.textContent = 'Prašau perskambinti';
         showMsg(
           'Nepavyko išsiųsti. Paskambinkite tiesiai: +370 674 72202',
           'bad'
