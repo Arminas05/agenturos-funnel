@@ -184,11 +184,18 @@
 
     <!-- Veidas šioje vietoje sąmoningai: puslapis parduoda konkretų žmogų,
          o iki čia skaitytojas jo dar nematė. Kompiuteryje portretas stovi
-         greta teksto, telefone — virš jo. -->
+         greta teksto, telefone — virš jo.
+
+         Trumpas tylus ciklas vietoj statinės nuotraukos — judesys stipriau
+         parodo asmenybę nei kadras. `poster` rodo tą pačią nuotrauką kol
+         klipas dar nepasikrovė arba jei naršyklė jo neiškoduoja, tad
+         vizualiai niekas nepasikeičia net nepavykus vaizdo įrašui. -->
     <div class="about">
       <figure class="about-photo loading">
-        <img data-src="/assets/img/andrius.jpg"
-             alt="Renginių vedėjas Andrius su mikrofonu jubiliejaus šventėje">
+        <video data-src="/assets/video/andrius-intro.mp4"
+               poster="/assets/img/andrius.jpg"
+               muted loop playsinline preload="none"
+               aria-label="Renginių vedėjas Andrius su mikrofonu jubiliejaus šventėje"></video>
       </figure>
       <div class="presume">
         <p>Vedu šventes visoje Lietuvoje. Į jūsų vakarą atvažiuoja ne pavieniui
