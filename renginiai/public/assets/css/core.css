@@ -359,6 +359,68 @@ strong { font-weight: 700; color: var(--ink); }
   border-top: 1px solid var(--line); padding-top: 15px; margin-top: 4px;
 }
 
+.offer-sub {
+  font-size: 15px; color: var(--ink-mute);
+  margin: -6px 0 16px; line-height: 1.4;
+}
+
+/* ── Sezoninės kainos ─────────────────────────────────────────────
+   Kaina priklauso nuo sezono, todėl vienas skaičius meluotų. Abu
+   rodomi greta ir vienodo svorio: klientas iškart mato, į kurią pusę
+   patenka jo data, ir neturi skambinti vien tam, kad tai sužinotų.
+
+   Dvi skiltys išlieka dvi ir telefone — 390 px pločio ekrane kiekvienai
+   lieka ~165 px, o kainos eilutė yra trumpa („1100 €"). Sudėjus jas
+   viena po kita palyginimas dingtų, o būtent palyginimas čia yra visa
+   informacija. */
+.price-seasons {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin: 4px 0 20px; text-align: center;
+}
+.ps-col {
+  padding: 15px 10px 14px;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--paper);
+}
+.ps-col.ps-peak { background: var(--accent-tint); border-color: var(--accent); }
+.ps-label {
+  display: block; font-family: var(--font-body);
+  font-size: 11px; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--accent-dark); margin-bottom: 7px;
+}
+.ps-val {
+  display: block; font-family: var(--font-display);
+  font-size: clamp(28px, 6.4vw, 38px); font-weight: 700;
+  line-height: 1; color: var(--ink);
+}
+.ps-note {
+  display: block; font-size: 12px; line-height: 1.35;
+  color: var(--ink-mute); margin-top: 8px;
+}
+
+/* Antrinė pakopa (tik vedėjas) — sąmoningai kuklesnė už pilną paketą,
+   kad neatitrauktų dėmesio nuo to, ką puslapis realiai parduoda. */
+.tier-alt {
+  max-width: 560px; margin: 16px auto 0;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 15px 18px; background: var(--paper-warm);
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  justify-content: center; gap: 4px 10px; text-align: center;
+}
+.tier-alt strong { color: var(--ink); font-size: 16.5px; }
+.tier-alt span { color: var(--ink-soft); font-size: 15.5px; }
+.tier-alt em { font-style: normal; color: var(--ink-mute); font-size: 13.5px; width: 100%; }
+
+/* Dovanos prie pilno paketo. */
+.offer-gift {
+  display: flex; gap: 10px; align-items: flex-start; text-align: left;
+  background: var(--accent-tint); border-radius: var(--radius);
+  padding: 13px 15px; margin: 16px 0 4px;
+  font-size: 15.5px; color: var(--ink-soft);
+}
+.offer-gift strong { color: var(--ink); }
+.offer-gift svg { flex: none; margin-top: 2px; }
+
 /* ── Enemy / contrast list ───────────────────────────────────────── */
 .enemy { max-width: 620px; margin: 0 auto; }
 .enemy-item {
@@ -456,7 +518,19 @@ strong { font-weight: 700; color: var(--ink); }
   font-size: 13.5px; color: var(--ink-mute); line-height: 1.5;
   margin-bottom: 18px;
 }
-.consent input { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; }
+/* Varnelė lieka 18 px vizualiai, bet paspaudimo plotas išplečiamas iki
+   44 px per pseudoelementą. Pati varnelė didesnė atrodytų nerangiai, o
+   telefone į 18 px kvadratėlį pataikyti sunku — tai vienintelis
+   privalomas formos laukelis, kurio nepažymėjus siuntimas neįvyksta. */
+.consent input {
+  width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px;
+  position: relative;
+}
+.consent input::before {
+  content: ''; position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 44px; height: 44px;
+}
 .consent a { color: var(--accent-dark); }
 
 /* Honeypot — must stay visually hidden but NOT display:none, or some
@@ -530,7 +604,13 @@ footer {
   text-align: center;
   color: var(--ink-mute); font-size: 13.5px; line-height: 1.7;
 }
-footer a { color: var(--ink-mute); }
+/* Poraštės nuorodos telefone buvo 15 px aukščio — per plonos pirštui.
+   `inline-block` + vertikalus tarpas duoda 44 px paspaudimo juostą
+   nepakeičiant nei šrifto dydžio, nei eilutės išvaizdos. */
+footer a {
+  color: var(--ink-mute);
+  display: inline-block; padding: 14px 4px; margin: -14px 0;
+}
 .disclaimer {
   max-width: 620px; margin: 0 auto 14px;
   font-size: 12.5px; color: var(--ink-mute);
