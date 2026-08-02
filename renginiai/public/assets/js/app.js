@@ -37,6 +37,21 @@
       mediaFailed++;
       return;
     }
+
+    /* Portretas sekcijoje „Kas aš toks" nėra įrodymų tinklelio dalis:
+       jo nesant tekstas turi likti vienas, o ne šalia punktyrinio
+       langelio su failo pavadinimu. Tinklelis susitraukia į vieną
+       skiltį pats, nes antra skiltis tiesiog dingsta. */
+    if (fig.classList.contains('about-photo')) {
+      var about = fig.parentElement;
+      fig.remove();
+      /* Vien pašalinti kadro neužtenka: tinklelio stulpeliai aprašyti
+         CSS'e, todėl likęs tekstas atsistotų į 300 px portreto stulpelį
+         ir liktų su tuščia puse dešinėje. Žyma grąžina jį į vieną
+         pilno pločio stulpelį. */
+      if (about) about.classList.add('about-solo');
+      return;
+    }
     fig.classList.remove('loading');
     fig.classList.add('media-empty');
     var cap = fig.querySelector('figcaption');
