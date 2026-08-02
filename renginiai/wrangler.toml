@@ -31,7 +31,17 @@ database_id = "4008592d-ac1d-40f2-b8a4-45b01090c27e"
 [observability]
 enabled = true
 
-# Slaptų kintamųjų (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID,
+# Slaptų kintamųjų (RESEND_API_KEY, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID,
 # TURNSTILE_SECRET, LEADS_TOKEN) į šį failą RAŠYTI NEGALIMA — jis yra git'e.
 # Jie nustatomi skydelyje: Workers projektas → Settings →
 # Variables and Secrets → Add → Secret
+#
+# El. pašto pranešimams reikia trijų reikšmių:
+#   RESEND_API_KEY   (Secret) — raktas iš resend.com
+#   LEAD_EMAIL_TO    (Text)   — kam siųsti, pvz. labas@vedejasandrius.lt
+#   LEAD_EMAIL_FROM  (Text)   — nuo ko; domenas turi būti patvirtintas
+#                               Resend'e, pvz. uzklausos@send.vedejasandrius.lt
+#
+# Nenustačius bent vieno, laiškai tiesiog nesiunčiami — forma ir toliau
+# veikia ir rašo į D1. Taip sąmoningai: pranešimo gedimas neturi kainuoti
+# kliento kontakto.
