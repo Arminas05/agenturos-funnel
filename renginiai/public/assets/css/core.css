@@ -689,3 +689,49 @@ footer a {
   background: linear-gradient(to top, rgba(20, 16, 12, .8), transparent);
   color: #fff; font-size: 13px; font-weight: 600;
 }
+
+/* ── Slapukų sutikimo juosta ─────────────────────────────────────────
+   z-index 700: virš lipnaus mobilaus CTA (500), po exit-intent
+   overlay'aus (999) — pastarasis ir taip pasirodo tik po 8 s, kai
+   juosta jau seniai uždaryta.
+
+   Sąmoningai be „X" mygtuko viršuje — žr. paaiškinimą consent.js. */
+.cookie-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 700;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px;
+  padding: 18px 20px calc(18px + env(safe-area-inset-bottom));
+  background: var(--paper); border-top: 1px solid var(--line);
+  box-shadow: 0 -8px 24px rgba(20, 16, 12, .10);
+  transform: translateY(100%); transition: transform .3s ease;
+}
+.cookie-bar.on { transform: translateY(0); }
+.cookie-bar p {
+  flex: 1 1 320px; margin: 0;
+  font-size: 14px; line-height: 1.55; color: var(--ink-soft);
+}
+.cookie-bar a { color: var(--accent-dark); }
+.cookie-bar-actions {
+  display: flex; gap: 10px; flex: 0 0 auto;
+  margin-left: auto;
+}
+.cookie-bar-actions button {
+  font-family: var(--font-body); font-size: 14.5px; font-weight: 700;
+  padding: 11px 20px; border-radius: var(--radius);
+  cursor: pointer; white-space: nowrap;
+  transition: background .15s ease, border-color .15s ease;
+}
+.cookie-bar-actions .btn {
+  border: none; background: var(--accent); color: #fff;
+  width: auto; box-shadow: none;
+}
+.cookie-bar-actions .btn:hover { background: var(--accent-dark); }
+.cookie-bar-actions .btn-outline {
+  background: transparent; color: var(--ink-soft);
+  border: 1.5px solid var(--line);
+}
+.cookie-bar-actions .btn-outline:hover { border-color: var(--ink-mute); }
+@media (max-width: 560px) {
+  .cookie-bar { flex-direction: column; align-items: stretch; }
+  .cookie-bar-actions { margin-left: 0; }
+  .cookie-bar-actions button { flex: 1; }
+}
