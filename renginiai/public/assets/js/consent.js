@@ -1,15 +1,21 @@
-/* Slapukų sutikimas — Microsoft Clarity yra neesminė analitika, todėl
-   pagal BDAR/ePrivacy negali būti paleista be išankstinio lankytojo
-   sutikimo. Šis failas:
+/* Slapukų sutikimas — Microsoft Clarity ir Google Tag Manager yra
+   neesminė analitika/rinkodara, todėl pagal BDAR/ePrivacy negali būti
+   paleisti be išankstinio lankytojo sutikimo. Šis failas:
 
-   1. Rodo juostą pirmo apsilankymo metu, PRIEŠ įkraunant Clarity —
-      pats Clarity <script> tag'as niekur kitur puslapiuose neįtrauktas,
-      jį prideda tik loadClarity() žemiau.
-   2. Įkrauna Clarity TIK paspaudus „Sutinku". Atmetimo atveju
-      apskritai neįkrauna, kol vartotojas savarankiškai nepakeičia
-      pasirinkimo per poraštės nuorodą.
+   1. Rodo juostą pirmo apsilankymo metu, PRIEŠ įkraunant įrankius —
+      nei Clarity, nei GTM <script> žymų puslapiuose nėra, jas prideda
+      tik loadAnalytics() žemiau.
+   2. Įkrauna juos TIK paspaudus „Sutinku". Atmetimo atveju apskritai
+      neįkrauna, kol vartotojas savarankiškai nepakeičia pasirinkimo per
+      poraštės nuorodą.
    3. Sprendimą įsimena localStorage, kad juosta nesikartotų kas
       apsilankymą.
+
+   GTM sąmoningai gaudomas visas, o ne per jo paties Consent Mode:
+   Consent Mode konteinerį vis tiek užkrautų ir leistų siųsti
+   „cookieless pings", o pilnas blokavimas iki sutikimo yra
+   nedviprasmiškas. Kai prireiks tag'ų, kurie turi veikti be sutikimo,
+   tada verta pereiti prie Consent Mode.
 
    Sąmoningai be „X" uždarymo mygtuko: uždarymas be aiškaus pasirinkimo
    priežiūros institucijų dažnai traktuojamas kaip numanomas sutikimas,
@@ -21,12 +27,18 @@
 
   var KEY = 'cookieConsent';
 
-  var loadClarity = function () {
-    if (window.__clarityRequested) return;
-    window.__clarityRequested = true;
-    var s = document.createElement('script');
-    s.src = '/assets/js/clarity.js';
-    document.head.appendChild(s);
+  /* GTM turi startuoti pirmas: jei jame sukonfigūruotas tag'as, kuris
+     pats siunčia įvykius, jam reikia, kad dataLayer jau egzistuotų. */
+  var SCRIPTS = ['/assets/js/gtm.js', '/assets/js/clarity.js'];
+
+  var loadAnalytics = function () {
+    if (window.__analyticsRequested) return;
+    window.__analyticsRequested = true;
+    SCRIPTS.forEach(function (src) {
+      var s = document.createElement('script');
+      s.src = src;
+      document.head.appendChild(s);
+    });
   };
 
   var hideBar = function (bar) {
@@ -42,9 +54,9 @@
     bar.setAttribute('role', 'region');
     bar.setAttribute('aria-label', 'Slapukų nustatymai');
     bar.innerHTML =
-      '<p>Naudojame <em>Microsoft Clarity</em>, kad suprastume, kaip ' +
-      'lankytojai naudojasi svetaine — jokių asmens duomenų, formos ' +
-      'laukelių turinį šis įrankis automatiškai mato užmaskuotą. ' +
+      '<p>Naudojame <em>Microsoft Clarity</em> ir <em>Google Tag ' +
+      'Manager</em>, kad suprastume, kaip lankytojai naudojasi svetaine. ' +
+      'Formos laukelių turinio šie įrankiai nemato. ' +
       '<a href="/privatumas">Privatumo politika</a>.</p>' +
       '<div class="cookie-bar-actions">' +
       '<button type="button" class="btn-outline" data-choice="denied">Tik būtini</button>' +
@@ -59,13 +71,13 @@
       var choice = btn.getAttribute('data-choice');
       localStorage.setItem(KEY, choice);
       hideBar(bar);
-      if (choice === 'granted') loadClarity();
+      if (choice === 'granted') loadAnalytics();
     });
   };
 
   var init = function () {
     var choice = localStorage.getItem(KEY);
-    if (choice === 'granted') { loadClarity(); return; }
+    if (choice === 'granted') { loadAnalytics(); return; }
     if (choice === 'denied') return;
     buildBar();
   };
