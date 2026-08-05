@@ -1,10 +1,10 @@
-/* Slapukų sutikimas — Microsoft Clarity ir Google Tag Manager yra
-   neesminė analitika/rinkodara, todėl pagal BDAR/ePrivacy negali būti
-   paleisti be išankstinio lankytojo sutikimo. Šis failas:
+/* Slapukų sutikimas — Microsoft Clarity, Google Tag Manager ir GA4
+   (gtag.js) yra neesminė analitika/rinkodara, todėl pagal BDAR/ePrivacy
+   negali būti paleisti be išankstinio lankytojo sutikimo. Šis failas:
 
-   1. Rodo juostą pirmo apsilankymo metu, PRIEŠ įkraunant įrankius —
-      nei Clarity, nei GTM <script> žymų puslapiuose nėra, jas prideda
-      tik loadAnalytics() žemiau.
+   1. Rodo juostą pirmo apsilankymo metu, PRIEŠ įkraunant įrankius — nė
+      vieno iš jų <script> žymų puslapiuose nėra, jas prideda tik
+      loadAnalytics() žemiau.
    2. Įkrauna juos TIK paspaudus „Sutinku". Atmetimo atveju apskritai
       neįkrauna, kol vartotojas savarankiškai nepakeičia pasirinkimo per
       poraštės nuorodą.
@@ -27,9 +27,10 @@
 
   var KEY = 'cookieConsent';
 
-  /* GTM turi startuoti pirmas: jei jame sukonfigūruotas tag'as, kuris
-     pats siunčia įvykius, jam reikia, kad dataLayer jau egzistuotų. */
-  var SCRIPTS = ['/assets/js/gtm.js', '/assets/js/clarity.js'];
+  /* GTM ir gtag.js turi startuoti pirmi: abu naudoja tą patį
+     window.dataLayer, ir jei jame sukonfigūruotas tag'as, kuris pats
+     siunčia įvykius, jam reikia, kad dataLayer jau egzistuotų. */
+  var SCRIPTS = ['/assets/js/gtm.js', '/assets/js/gtag.js', '/assets/js/clarity.js'];
 
   var loadAnalytics = function () {
     if (window.__analyticsRequested) return;
@@ -54,9 +55,8 @@
     bar.setAttribute('role', 'region');
     bar.setAttribute('aria-label', 'Slapukų nustatymai');
     bar.innerHTML =
-      '<p>Naudojame <em>Microsoft Clarity</em> ir <em>Google Tag ' +
-      'Manager</em>, kad suprastume, kaip lankytojai naudojasi svetaine. ' +
-      'Formos laukelių turinio šie įrankiai nemato. ' +
+      '<p>Naudojame slapukus, kad suprastume, kaip lankytojai naudojasi ' +
+      'svetaine. Formos laukelių turinio nematome. ' +
       '<a href="/privatumas">Privatumo politika</a>.</p>' +
       '<div class="cookie-bar-actions">' +
       '<button type="button" class="btn-outline" data-choice="denied">Tik būtini</button>' +
