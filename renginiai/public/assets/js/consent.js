@@ -54,9 +54,8 @@
     bar.setAttribute('role', 'region');
     bar.setAttribute('aria-label', 'Slapukų nustatymai');
     bar.innerHTML =
-      '<p>Naudojame <em>Microsoft Clarity</em> ir <em>Google Tag ' +
-      'Manager</em>, kad suprastume, kaip lankytojai naudojasi svetaine. ' +
-      'Formos laukelių turinio šie įrankiai nemato. ' +
+      '<p>Naudojame slapukus, kad suprastume, kaip lankytojai naudojasi ' +
+      'svetaine. Formos laukelių turinio nematome. ' +
       '<a href="/privatumas">Privatumo politika</a>.</p>' +
       '<div class="cookie-bar-actions">' +
       '<button type="button" class="btn-outline" data-choice="denied">Tik būtini</button>' +
