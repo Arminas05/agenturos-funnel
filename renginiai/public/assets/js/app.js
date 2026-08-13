@@ -11,6 +11,23 @@
     el.textContent = new Date().getFullYear();
   });
 
+  /* ── Skambučio mygtukų sekimas (GA4) ──────────────────────────────
+     data-track="call-*" jau buvo HTML'e, bet niekad nesujungta su
+     analytics — mygtukai buvo paspaudžiami, bet niekas neskaičiavo.
+     Skaičiuoja paspaudimus, ne pačius skambučius: naršyklė neturi būdo
+     sužinoti, ar tel: nuoroda realiai virto pokalbiu, tik kad ją
+     paspaudė. gtag egzistuoja tik po sutikimo (žr. consent.js), todėl
+     patikra apsaugo nuo klaidos prieš sutikimą arba jei GA4 blokuota. */
+  document.querySelectorAll('[data-track]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'phone_call_click', {
+          call_location: el.dataset.track
+        });
+      }
+    });
+  });
+
   /* ── Tingus medžiagos krovimas ────────────────────────────────────
      Trys vaizdo įrašai sveria apie 5 MB. Kraunant juos iškart puslapis
      telefone mirtų dar prieš pamatant antraštę, todėl `src` priskiriamas
