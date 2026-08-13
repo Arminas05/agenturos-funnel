@@ -26,6 +26,16 @@ aiškinti tų pačių dalykų kiekvieną kartą.
   viduje (pvz. „tampa"), `.accent-link` — pabraukta fraze pastraipoje (lengvesnė
   už `.hl`, skirta trumpoms 2-3 žodžių frazėms kaip „viena kryptis").
 
+## Kai naudotojas sako „dar neatsinaujino"
+
+Pirmiausia patikrinti `git log -1 -- <failas>` ir `grep` patį pakeitimą repo —
+jei jis TEN yra (push'as pavyko), problema greičiausiai naršyklės ar
+Cloudflare edge cache, NE kodas. Nekartoti redagavimo aklai. Paaiškinti
+naudotojui, kad kodas patvirtintas teisingas, ir paprašyti hard refresh
+(Ctrl+Shift+R) arba inkognito lango prieš darant bet kokius papildomus
+pakeitimus. Šitas scenarijus jau pasikartojo (žr. FAKTAS-šalia-juostos
+epizodą) — tikėtina pasikartos ir ateityje su šiuo projektu.
+
 ## Darbo eiga keičiant kodą
 
 1. Šaka iš `main`, redaguoti, tada **Playwright screenshot 390px ir 1440px**
