@@ -276,6 +276,9 @@
       email: email,
       event_type: document.getElementById('fType').value,
       event_date: document.getElementById('fDate').value,
+      city: document.getElementById('fCity').value.trim(),
+      guest_count: document.getElementById('fGuests').value.trim(),
+      message: document.getElementById('fMessage').value.trim(),
       company: document.getElementById('fCompany').value, /* honeypot */
       page: window.location.pathname,
       referrer: document.referrer || ''
