@@ -11,11 +11,18 @@ aiškinti tų pačių dalykų kiekvieną kartą.
   pastraidoms.
 - **Faktas/citata su šaltiniu:** citata kabutėse „...", šaltinis atskiroje
   eilutėje skliaustuose `(Šaltinis)` — BE papildomo paaiškinimo sakinio tipo
-  „Dažnai cituojama...". Žr. `.fact-box` klasę `core.css` / `index.html`.
+  „Dažnai cituojama...". Stilius: `.pullquote` (italic serif, be rėmelio,
+  centruota) + `.fact-source` po ja — NE bordered card (`.fact-box` išimta iš
+  `core.css`, buvo per sunki vizualiai).
 - **Jokių sugalvotų skaičių, atsiliepimų ar citatų.** Tik patikrinami faktai su
   nurodytu šaltiniu, arba realūs, jau egzistuojantys puslapio faktai (pvz.
   „vienai dienai — vienas renginys"). Žr. FAQ „Kodėl puslapyje nėra
   atsiliepimų?" — tai sąmoninga pozicija, ne aplaidumas.
+- **Akcentas pabraukimu:** `.hl` (bold + accent spalva) NĖRA pabrauktas — jis
+  naudojamas 4+ vietose svetainėje kaip antraščių akcentas, pabraukimas ten
+  būtų per sunkus. Vietoj to: `.hl-u` — pabraukimas TIK vienam žodžiui h1
+  viduje (pvz. „tampa"), `.accent-link` — pabraukta fraze pastraipoje (lengvesnė
+  už `.hl`, skirta trumpoms 2-3 žodžių frazėms kaip „viena kryptis").
 
 ## Darbo eiga keičiant kodą
 
@@ -41,6 +48,14 @@ Kai keičiami `renginiai/schema.sql` stulpeliai (nauji laukai formoje ir pan.):
    realiems klientams (`INSERT` į neegzistuojantį stulpelį).
 3. Niekada nemerginti/nepushinti tokio kodo, kol naudotojas nepatvirtino, kad
    migracija jau paleista.
+
+## Kai naudotojas atsiunčia dizaino nuorodą (screenshot/mockup)
+
+Tai reiškia „padaryk TIKSLIAI taip", ne bendrą įkvėpimą. Atkurti:
+elementų TVARKĄ (ne tik tekstą), stilių (rėmelis/be rėmelio, šriftas), o ne
+tik spalvas. Po pakeitimo — savas Playwright screenshot palyginimui prieš
+pushinant, nes smulkūs neatitikimai (pvz. neteisinga elementų tvarka)
+lengvai praslysta be vizualaus patikrinimo.
 
 ## Kitos pastabos
 
