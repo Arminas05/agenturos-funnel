@@ -13,7 +13,9 @@ aiškinti tų pačių dalykų kiekvieną kartą.
   eilutėje skliaustuose `(Šaltinis)` — BE papildomo paaiškinimo sakinio tipo
   „Dažnai cituojama...". Stilius: `.pullquote` (italic serif, be rėmelio,
   centruota) + `.fact-source` po ja — NE bordered card (`.fact-box` išimta iš
-  `core.css`, buvo per sunki vizualiai).
+  `core.css`, buvo per sunki vizualiai). Tarpas po `.fact-source` iki
+  sekančio bloko (CTA ir pan.) — **~40px, ne ~25px**: 25px šalia stambių
+  mygtukų atrodo per glausta.
 - **Jokių sugalvotų skaičių, atsiliepimų ar citatų.** Tik patikrinami faktai su
   nurodytu šaltiniu, arba realūs, jau egzistuojantys puslapio faktai (pvz.
   „vienai dienai — vienas renginys"). Žr. FAQ „Kodėl puslapyje nėra
