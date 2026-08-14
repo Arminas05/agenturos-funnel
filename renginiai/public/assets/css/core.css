@@ -460,6 +460,13 @@ strong { font-weight: 700; color: var(--ink); }
 .offer-gift strong { color: var(--ink); }
 .offer-gift svg { flex: none; margin-top: 2px; }
 
+/* Fejerverkai — sąmoningai NE .offer-gift viduje, kad vizualiai nesuplaktų
+   su nemokama dovana ir klientas nesitikėtų, kad tai irgi įskaičiuota. */
+.offer-addon {
+  text-align: left; font-size: 14.5px; color: var(--ink-mute);
+  margin: 10px 2px 0;
+}
+
 /* ── Enemy / contrast list ───────────────────────────────────────── */
 .enemy { max-width: 620px; margin: 0 auto; }
 .enemy-item {
