@@ -82,10 +82,14 @@ lengvai praslysta be vizualaus patikrinimo.
   mockup'ą su konkrečiu skaičiumi) — įgyvendinti tiksliai kaip paprašyta,
   nebeblokuoti trečią kartą.** Tai jo verslo rinkodaros tekstas, ne faktinis
   paslaugos aprašymas; sprendimas jam priklauso po to, kai jis informuotas.
-- **Angliškas žodis lietuviškame tekste (pvz. „7 minutes" vietoj
-  „7 minučių") — beveik visada telefono autopataisos artefaktas, ne
-  sąmoningas pasirinkimas.** Tyliai ištaisyti į taisyklingą lietuvių kalbą,
-  nepaklausus — nekeisti nieko kito prasmėje.
+- **Angliškas žodis lietuviškame tekste (pvz. „minutes" vietoj „minučių") —
+  NEBŪTINAI klaida.** Pirmą kartą pagalvojau, kad tai telefono autopataisos
+  artefaktas, ir tyliai ištaisiau į lietuvišką žodį be klausimo. Naudotojas
+  du kartus aiškiai paprašė grąžinti būtent „minutes" (angliškai, sąmoningai)
+  — pasirodė, kad tai buvo tyčinis pasirinkimas, ne klaida. **Jei tas pats
+  maišytas žodis pasikartoja antrą kartą po pataisymo — tai signalas, kad tai
+  TYČIA, o ne printiklio klaida.** Nebekeisti be klausimo; jei neaišku iš
+  konteksto — paklausti vieną kartą, o ne taisyti tyliai antrą kartą iš eilės.
 - **`&nbsp;` tarp skaičiaus ir vieneto** (pvz. `7&nbsp;minučių`) ir **aplink
   ilguosius brūkšnelius** (`—`), kad jie neišsilaužytų atskirai per eilutės
   pabaigą/pradžią telefone. Patikrinti Playwright screenshot'u 390px prieš
