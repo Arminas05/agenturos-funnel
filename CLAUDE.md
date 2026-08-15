@@ -69,6 +69,29 @@ tik spalvas. Po pakeitimo — savas Playwright screenshot palyginimui prieš
 pushinant, nes smulkūs neatitikimai (pvz. neteisinga elementų tvarka)
 lengvai praslysta be vizualaus patikrinimo.
 
+## Headline užklausos (`/headline-creator` stiliaus)
+
+- Skill'o „effortless mechanism" formulė (laiko suspaudimas + rezultatas +
+  skuba) parašyta Arminui savo AI/no-code verslui — Andriaus sąžiningam
+  asmeniniam brandui ji iš prigimties netinka (nes žada greitį, kurio realiai
+  nėra: pati šventė trunka valandas, ne minutes). **Vis tiek pareiga:
+  paminėti šitą neatitikimą VIENĄ kartą aiškiai** (kaip padariau su
+  „7 minučių" pavyzdžiu), pasiūlyti sąžiningą alternatyvą su realiu skaičiumi
+  (pvz. jau įrodytu „20 minučių" pirmo pokalbio faktu). **Jei naudotojas,
+  išgirdęs pastabą, vis tiek nurodo tikslų tekstą antrą kartą (ar duoda
+  mockup'ą su konkrečiu skaičiumi) — įgyvendinti tiksliai kaip paprašyta,
+  nebeblokuoti trečią kartą.** Tai jo verslo rinkodaros tekstas, ne faktinis
+  paslaugos aprašymas; sprendimas jam priklauso po to, kai jis informuotas.
+- **Angliškas žodis lietuviškame tekste (pvz. „7 minutes" vietoj
+  „7 minučių") — beveik visada telefono autopataisos artefaktas, ne
+  sąmoningas pasirinkimas.** Tyliai ištaisyti į taisyklingą lietuvių kalbą,
+  nepaklausus — nekeisti nieko kito prasmėje.
+- **`&nbsp;` tarp skaičiaus ir vieneto** (pvz. `7&nbsp;minučių`) ir **aplink
+  ilguosius brūkšnelius** (`—`), kad jie neišsilaužytų atskirai per eilutės
+  pabaigą/pradžią telefone. Patikrinti Playwright screenshot'u 390px prieš
+  pushinant — akimis matomas skirtumas tarp „7" vienišo eilutės gale ir
+  „7 minučių" kartu.
+
 ## Kitos pastabos
 
 - Prekės ženklas asmeninis („Vedėjas Andrius"), pirmuoju asmeniu / pora
