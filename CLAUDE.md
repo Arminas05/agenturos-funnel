@@ -60,6 +60,19 @@ Kai keičiami `renginiai/schema.sql` stulpeliai (nauji laukai formoje ir pan.):
    realiems klientams (`INSERT` į neegzistuojantį stulpelį).
 3. Niekada nemerginti/nepushinti tokio kodo, kol naudotojas nepatvirtino, kad
    migracija jau paleista.
+4. **Nepasitikėti vien patvirtinimu iš atminties/pokalbio — patikrinti TIESIOGIAI.**
+   2026-09 nutiko taip: migracija (`0001_add_city_guests_message.sql`) buvo
+   sukurta, o kodas su `city`/`guest_count`/`message` merge'intas — bet migracija
+   REALIAI niekad nebuvo paleista gyvoje bazėje. Rezultatas: kiekviena formos
+   užklausa ~mėnesį žlugo tyliai (500 klaida serverio žurnale, naudotojui tik
+   bendra „Nepavyko išsiųsti"), o D1 turėjo tik 1 tikrą lead'ą. Cloudflare
+   Developer Platform MCP (`d1_database_query` / `d1_databases_list`) šioje
+   sesijoje VEIKĖ (ankstesnės sesijos pastabos apie neprieinamumą buvo
+   pasenusios) — jei jis pasiekiamas, PRIEŠ merginant patikrinti realią schemą:
+   `PRAGMA table_info(leads);` prieš ir po migracijos, o po merge'inimo padaryti
+   bandomąjį INSERT+DELETE per tą patį kelią, kurį naudoja kodas — ne tik
+   patikėti, kad kažkas „jau paleido". Žr. `/errors` skill →
+   `references/cloudflare-d1.md` → `[D1-001]` pilnam aprašymui.
 
 ## Kai naudotojas atsiunčia dizaino nuorodą (screenshot/mockup)
 
