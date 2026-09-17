@@ -404,24 +404,17 @@ strong { font-weight: 700; color: var(--ink); }
 }
 
 /* ── Sezoninės kainos ─────────────────────────────────────────────
-   Kaina priklauso nuo sezono, todėl vienas skaičius meluotų. Abu
-   rodomi greta ir vienodo svorio: klientas iškart mato, į kurią pusę
-   patenka jo data, ir neturi skambinti vien tam, kad tai sužinotų.
-
-   Dvi skiltys išlieka dvi ir telefone — 390 px pločio ekrane kiekvienai
-   lieka ~165 px, o kainos eilutė yra trumpa („1100 €"). Sudėjus jas
-   viena po kita palyginimas dingtų, o būtent palyginimas čia yra visa
-   informacija. */
+   Kaina priklauso nuo sezono, todėl vienas skaičius meluotų. Abi kainos
+   rodomos viename bloke, atskirtos tik plona linija — ne dviem atskirai
+   apibrėžtais rėmeliais viena prie kitos. Tas dvigubas rėmelis (išorinis
+   `.offer` + du vidiniai `.ps-col` rėmeliai) atrodė perkrautas, todėl
+   sujungta į vieną bloką su vidine linija tarp kainų. */
 .price-seasons {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 10px; margin: 4px 0 20px; text-align: center;
-}
-.ps-col {
-  padding: 15px 10px 14px;
   border: 1px solid var(--line); border-radius: var(--radius);
-  background: var(--paper);
+  margin: 4px 0 20px; text-align: center; overflow: hidden;
 }
-.ps-col.ps-peak { background: var(--accent-tint); border-color: var(--accent); }
+.ps-col { padding: 16px 10px 15px; }
+.ps-col + .ps-col { border-top: 1px solid var(--line); }
 .ps-label {
   display: block; font-family: var(--font-body);
   font-size: 11px; font-weight: 800; letter-spacing: .08em;
