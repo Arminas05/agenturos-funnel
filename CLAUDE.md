@@ -36,6 +36,26 @@ naudotojui, kad kodas patvirtintas teisingas, ir paprašyti hard refresh
 pakeitimus. Šitas scenarijus jau pasikartojo (žr. FAKTAS-šalia-juostos
 epizodą) — tikėtina pasikartos ir ateityje su šiuo projektu.
 
+**2026-09: rasta tikroji dalies šių epizodų priežastis.** `public/_headers`
+turėjo `/assets/* → Cache-Control: public, max-age=31536000, immutable`.
+Cloudflare Workers numatytas (be šio override'o) elgesys yra saugus:
+`public, max-age=0, must-revalidate` + ETag — visada patikrina, ar failas
+pasikeitė, prieš naudodama seną kopiją. Mūsų pačių `immutable, max-age=metai`
+override'as tą saugiklį IŠJUNGĖ CSS/JS failams, kurie (skirtingai nei
+nuotraukos/video, kurie pervadinami, ne redaguojami) keičiami TIESIOGIAI tuo
+pačiu failo vardu — naršyklė galėjo iki metų rodyti seną `core.css`/`app.js`
+versiją net po sėkmingo deploy'aus. Ištaisyta: `immutable` ilgas cache paliktas
+TIK `/assets/img/*` ir `/assets/video/*` (jie realiai nekeičiami vietoje);
+CSS/JS grąžinti į Cloudflare numatytą saugų elgesį. Jei ateity vėl atsiranda
+poreikis agresyviai kešuoti CSS/JS, tam reikia content-hash failo varde
+(pvz. `core.a1b2c3.css`), NE fiksuoto vardo + `immutable`.
+
+**`_headers` faile NĖRA komentarų sintaksės.** `/* tekstas */` nebūtų
+komentaras — tai būtų suprasta kaip URL šablonas `/*` (atitinka VISKĄ),
+nes formatas yra tik `[url pattern]` eilutė + įtrauktos `Name: Value`
+eilutės, be jokios alternatyvos. Paaiškinimus rašyti čia, CLAUDE.md, ne
+paties `_headers` failo viduje.
+
 ## Darbo eiga keičiant kodą
 
 1. Šaka iš `main`, redaguoti, tada **Playwright screenshot 390px ir 1440px**
